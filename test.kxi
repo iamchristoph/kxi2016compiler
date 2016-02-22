@@ -1,0 +1,67 @@
+// test.kxi
+class _bufar{
+  private int blob(int barf[], bool grub[]){}
+  _bufar(){ }
+  public char c;
+  private int s;
+  public rabuf muck(rabuf stuff) {
+    int x;
+    int y;
+    x = y;
+    x = 5 + y;
+    x = y * 3 + s / 4 -s;
+  }
+}
+
+class rabuf{
+  private int ex;
+  private bool sucking;
+  public char goof[];
+  public int  blah (){}
+  private foo bar() {
+    _bufar momo;
+    int a = new int [(ex) + 2];
+    //foo chit;
+    rabuf chitty;
+    char uck;
+    int hit;
+    char cu;
+    int goback;
+    char A = 'A';
+    a = A * chit;
+    {
+      chitty;
+      if (uck + 5) {} else hit/ex;
+    }
+    while (sucking) {
+      cout << goof;
+      cin >> cu + ('c' + goback ) ;
+      block;
+      -3 * hit / uck - 10 and chitty.boy[stuff].doit
+      (this, that, 2) or those + 9 < 'd' > s <= 5 >= thing < twid + lob and this.fub[bull - live];
+      lock it;
+      spawn true set fubar;
+    }
+    return yum;
+  }
+  public _bufar buffy;
+  public rabuf rabi;
+  private bool goo;
+  public char foo[];
+  private sym boo = c;
+  public void goo[] = meh;
+  rabuf (char chunks[], sym ad, void grubs){}
+} 
+void kxi2016 main () {
+  int cho;
+  rabuf rab[];
+  if (cho) bobo;
+  x = y.f(k, g) + g * r;
+}
+//nil this is {and} for '323' testi23ng '\t' '3' purposes
+//@ 1 *  # -2 +342 - 98274
+//"whileif"( 123 = 3) no; // lets add a comment out here.
+//bumer [or]       thats != cool 's'
+//nd <= but not >= <?xml version="1.0" ?>
+
+
