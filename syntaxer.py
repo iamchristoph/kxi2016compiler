@@ -19,6 +19,14 @@ class symtable :
     for _id, sym in self.table.iteritems() :
       if lexem == sym.value :
         return _id, sym
+    return None
+  def idsymfromlexscope(self, lexem, scope) :
+    #print lexem, scope
+    for _id, sym in self.table.iteritems() :
+      if lexem == sym.value :
+        if scope == sym.scope :
+          return _id, sym
+    return None
   def get(self, symid) :
     return self.table.get(symid)
   def getid(self, kind) :
@@ -30,7 +38,7 @@ class symtable :
       c = 'H'
     return c + str(self.currentid)
   def insert(self, t, kind, data=None, scope=None, override=False) :
-    if not self.isfull and not override :
+    if not self.isfull or override :
       _id = self.getid(kind)
       if override :
         val = _id
@@ -147,6 +155,10 @@ class syntaxer :
     else :
       self.generror('argumentlist', '', 'expression')
     while self.token().lexeme == ',' :
+      if self.semcheck :
+        success = semantic.arg()
+        if not success[0] :
+          self.gensemerror(success[1])
       self.tkgen.next()
       if self.isexpression(self.token()) :
         self.expression()
@@ -176,9 +188,20 @@ class syntaxer :
 
   def fnarrmember(self) :
     if self.token().lexeme == '(' :
+      if self.semcheck :
+        semantic.opush('(')
+        semantic.bal()
       self.tkgen.next()
-      self.argumentlist()
+      if self.token().lexeme != ')' :
+        self.argumentlist()
       if self.token().lexeme == ')' :
+        if self.semcheck :
+          success = semantic.eal()
+          if not success[0] :
+            self.gensemerror(success[1])
+          succes = semantic.func()
+          if not success[0] :
+            self.gensemerror(success[1])
         self.tkgen.next()
       else :
         self.generror('fnarrmember', '', 'symbol', ')')
@@ -199,11 +222,17 @@ class syntaxer :
     else :
       self.generror('memberrefz', '', 'punctuation', '.')
     if self.token().type == 'identifier' :
+      if self.semcheck :
+        semantic.ipush(self.token())
       self.tkgen.next()
     else :
       self.generror('memberrefz', '', 'identifier')
     if self.isfnarrmember(self.token()) :
       self.fnarrmember()
+    if self.semcheck :
+        success = semantic.rexist()
+        if not success[0] :
+          self.gensemerror(success[1])
     if self.token().lexeme == '.' :
       self.memberrefz()
     #member_refz::= "." identifier [ fn_arr_member ] [ member_refz ]
@@ -241,12 +270,18 @@ class syntaxer :
     elif t.type == 'identifier' :
       if self.semcheck :
         semantic.ipush(t)
-        success = semantic.iexist(self.symtab)
-        if not success[0] :
-          self.gensemerror(success[1])
       self.tkgen.next()
       if self.isfnarrmember(self.token()) :
         self.fnarrmember()
+        if self.semcheck :
+          success = semantic.func()
+          if not success[0] :
+            self.gensemerror(success[1])
+      else :
+        if self.semcheck :
+          success = semantic.iexist(self.symtab)
+          if not success[0] :
+            self.gensemerror(success[1])
       if self.token().lexeme == '.' :
         self.memberrefz()
     else :

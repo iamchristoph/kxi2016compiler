@@ -2,6 +2,7 @@
 class _bufar{
   private int blob(int barf[], bool grub[]){}
   _bufar(){ }
+  public int bubu;
   public char c;
   private int s;
   public rabuf muck(rabuf stuff) {
@@ -14,49 +15,53 @@ class _bufar{
 }
 
 class rabuf{
-  private int ex;
+  public int ex;
   private bool sucking;
   public char goof[];
   public int  blah (){}
   private foo bar() {
     _bufar momo;
     int a = new int [(ex) + 2];
-    //foo chit;
+    char chit;
     rabuf chitty;
     char uck;
     int hit;
     char cu;
     int goback;
     char A = 'A';
-    a = A * chit;
+    a = goback * hit;
     {
       chitty;
       if (uck + 5) {} else hit/ex;
     }
     while (sucking) {
       cout << goof;
-      cin >> cu + ('c' + goback ) ;
+      cin >> a + (hit + goback ) ;
       block;
-      -3 * hit / uck - 10 and chitty.boy[stuff].doit
-      (this, that, 2) or those + 9 < 'd' > s <= 5 >= thing < twid + lob and this.fub[bull - live];
+      //-3 * hit / uck - 10 and chitty.boy[stuff].doit
+      //(this, that, 2) or those + 9 < 'd' > s <= 5 >= thing < twid + lob and this.fub[bull - live];
       lock it;
       spawn true set fubar;
     }
-    return yum;
+    return a;
   }
   public _bufar buffy;
   public rabuf rabi;
   private bool goo;
   public char foo[];
-  private sym boo = c;
-  public void goo[] = meh;
+  private sym boo;
+  public int goo[] = goof;
   rabuf (char chunks[], sym ad, void grubs){}
 } 
 void kxi2016 main () {
   int cho;
-  rabuf rab[];
-  if (cho) bobo;
-  x = y.f(k, g) + g * r;
+  rabuf rab;
+  _bufar buf;
+  buf.bubu = rab.ex;
+  cho = buf.muck( rab).ex;
+  cho = rab.blah();
+  //if (cho) rab[cho] = 5;
+  //x = y.f(k, g) + g * r;
 }
 //nil this is {and} for '323' testi23ng '\t' '3' purposes
 //@ 1 *  # -2 +342 - 98274

@@ -1,7 +1,7 @@
 from syntaxer import symtable
 
 ops = {'(': 0, ')': 0, '[': 0, ']': 0, '=': 1, 'or': 2, 'and': 2, '==': 3, '!=': 3, '<': 4, '<=': 4, '>': 4, '>=': 4, '+': 5, '-': 5, '*': 6, '/': 6}
-var = ('lvar', 'ivar')
+var = ('lvar', 'ivar', 'rlvar', 'rivar')
 
 class stack :
   def __init__(self) :
@@ -47,9 +47,7 @@ def opop() :
     elif r.data.data.type != 'int' :
       return False, 'Cannot add type ' + r.data.data.type + ' and ' + l.data.data.type
     else :
-      temp = symtab.insert(None, 'temp', override=True, data=symtable.data(type=l.data.data.type, returntype=l.data.data.type, param=None, accessmod='private'))
-      print temp
-      return True,
+      return pushtemp(l.data.data.type, l.data.data.type),
   elif op == '-' :
     r = SAS.pop()
     l = SAS.pop()
@@ -59,7 +57,7 @@ def opop() :
     elif r.data.data.type != 'int' :
       return False, 'Cannot subtract type ' + r.data.data.type + ' and ' + l.data.data.type
     else :
-      return True,
+      return pushtemp(l.data.data.type, l.data.data.type),
   elif op == '*' :
     r = SAS.pop()
     l = SAS.pop()
@@ -69,7 +67,7 @@ def opop() :
     elif r.data.data.type != 'int' :
       return False, 'Cannot multiply type ' + r.data.data.type + ' and ' + l.data.data.type
     else :
-      return True,
+      return pushtemp(l.data.data.type, l.data.data.type),
   elif op == '/' :
     r = SAS.pop()
     l = SAS.pop()
@@ -79,7 +77,7 @@ def opop() :
     elif r.data.data.type != 'int' :
       return False, 'Cannot divide type ' + r.data.data.type + ' and ' + l.data.data.type
     else :
-      return True,
+      return pushtemp(l.data.data.type, l.data.data.type),
   else :
     return True, 
 
@@ -88,9 +86,20 @@ class SAR :
     self.SAStype = t
     if t == 'ipush' :
       self.value = data.lexeme
+    elif t == '#AL' :
+      self.value = 'arglist'
+    elif t == 'func' :
+      self.value = data[0].value
+    else :
+      self.value = data.value
     self.data = data
     #self.symid
 
+def pushtemp(typ, rtyp, kind='temp') :
+  temp = symtab.insert(None, kind, override=True, data=symtable.data(type=typ, returntype=rtyp, param=None, accessmod='private'))
+  SAS.push(SAR('#TPUSH', symtab.get(temp)))
+  print '#TPUSH', SAS.top().data.symid
+  return True
 
 def ipush(token) :
   SAS.push(SAR('ipush', token))
@@ -98,8 +107,8 @@ def ipush(token) :
 
 def iexist(stable) :
   i = SAS.pop()
-  scope = stable.scope
-  idsym = stable.idsymfromlex(i.value)
+  scope = symtab.scope
+  idsym = symtab.idsymfromlex(i.value)
   if idsym :
     xid, symbol = idsym
   else :
@@ -108,18 +117,48 @@ def iexist(stable) :
     if symbol.scope == scope :
       SAS.push(SAR('iexist', symbol))
       break
+    elif scope == 'g' :
+      return False, 'The variable ' + i.value + ' DNE in the current scope'
     else :
       scope = widen(scope)
   print '#IEXIST', SAS.top().data.symid
   return True,
 
+def rexist() :
+  member = SAS.pop()
+  objec = SAS.pop()
+  clasname = objec.data.data.returntype
+  clasidsym = symtab.idsymfromlexscope(clasname, 'g')
+  if clasidsym :
+    cid, clas = clasidsym
+  else :
+    return False, 'Class ' + clasname + ' not found'
+  scope = clas.scope + '.' + clasname
+  idsym = symtab.idsymfromlexscope(member.value, scope)
+  if idsym :
+    xid, symbol = idsym
+    if symbol.kind == 'method' :
+      success = matchfunc(member, symbol)
+      if not success[0] :
+        return success
+    if symbol.data.accessmod == 'public' :
+      print symbol.data.type, symbol.data.returntype, 'r'+ symbol.kind
+      pushtemp(symbol.data.type, symbol.data.returntype, 'r'+ symbol.kind)
+  else :
+    return False, 'The reference ' + member.value + ' DNE'
+  print '#REXIST', SAS.top().data.symid
+  return True,
+
 def opush(op) :
   val = ops.get(op)
-  while OPS.length > 0 and val < ops[OPS.top()] :
-    success =  opop()
-    if not success[0] :
-      return success
-  OPS.push(op)
+  if val == 0 :
+    OPS.push(op)
+  else :
+    while OPS.length > 0 and val < ops[OPS.top()] :
+      success =  opop()
+      if not success[0] :
+        return success
+    OPS.push(op)
   print '#OPUSH', op
   return True,
 
@@ -133,8 +172,56 @@ def eoe() :
 
 def widen(scope) :
   s = scope.split('.')
+  if s == ['g'] :
+    return 'g'
   return '.'.join(s[0:-1])
 
 def lpush(sym) :
-  print '#LPUSH'
+  print '#LPUSH', sym.symid
   SAS.push(SAR('#LPUSH', sym))
+
+def bal() :               # FOr some reason its never getting in here.
+  print '#BAL', SAS.top().value
+  SAS.push(SAR('#BAL', SAS.top()))
+
+def eal() : 
+  arg()
+  print '#)'
+  op = OPS.pop()
+  if op != '(' :
+    return False, 'Expected to pop \'(\' got', op
+  arglist = []
+  while SAS.top().SAStype != '#BAL' :
+    arglist.append(SAS.pop().data)
+  SAS.pop()
+  SAS.push(SAR('#AL', arglist))
+  return True,
+
+def arg() :
+  print '#,'
+  while OPS.top() != '(' :
+    success = opop()
+    if not success[0] :
+      return success
+  return True,
+
+def func() :
+  args = SAS.pop()
+  #print 'args ', args.value
+  fname = SAS.pop()
+  #print 'funcname ', fname.value, args.data
+  SAS.push(SAR('func', [fname, args]))
+  return True,
+
+def matchfunc(funcsar, symbol) :
+  #print funcsar.data[0].data, funcsar.data[1].data, symbol.data.param
+  if funcsar.data[0].value != symbol.value :
+    return False, 'The function ' + funcsar.data[0].value + ' does not match ' + symbol.value
+  if len(funcsar.data[1].data) != len(symbol.data.param) :
+    #print funcsar.data, symbol.data.param
+    return False, 'The function ' + symbol.value + ' requires exactly ' + str(len(symbol.data.param)) + ' arguments'
+  for i in range(len(symbol.data.param)) : #params must be same type and order
+    #p, q in funcsar.data[1].data, symbol.data.param
+    if funcsar.data[1].data[i].data.returntype != symtab.get(symbol.data.param[i]).data.type :
+      return False, 'The function ' + symbol.value + ' should take a ' + symtab.get(symbol.data.param[i]).data.type + ' got ' + funcsar.data[1].data[i].data.returntype
+  return True,    
