@@ -39,6 +39,16 @@ class symtable :
     return c + str(self.currentid)
   def insert(self, t, kind, data=None, scope=None, override=False) :
     if not self.isfull or override :
+      if not override :
+        dup = self.idsymfromlexscope(t.lexeme, self.scope)
+        if dup :
+          if not (dup[1].kind == 'class' and kind == 'xtor') :
+            print 'Line: ', t.line, t.bit, 'The token', t.lexeme, 'has already been defined as', dup[1].data.type, 'cannot be redefined as', data.type
+            sys.exit(1)
+      if kind == 'ilit' or kind == 'clit' or kind == 'blit' or kind == 'null' :
+        dup = self.idsymfromlex(t.lexeme)
+        if dup :
+          return dup[0]
       _id = self.getid(kind)
       if override :
         val = _id
@@ -88,7 +98,7 @@ class syntaxer :
     self.token = self.lexer.getToken
     self.nexttoken = self.lexer.getNext
     self.tkgen = self.lexer.tokengenerator
-    self.classnames = []
+    self.classnames = ['int', 'char', 'bool', 'void', 'sym']
     self.symtab = symtable(d)
     self.semcheck = scheck
 
@@ -125,9 +135,12 @@ class syntaxer :
       return False
 
   def eoe(self, where='') :
+    rtn = False
+    if where == 'rtn' :
+      rtn = True
     if self.token().lexeme == ';' :
       if self.semcheck :
-        success = semantic.eoe()
+        success = semantic.eoe(rtn)
         if not success[0] :
           self.gensemerror(success[1])
       self.tkgen.next()
@@ -168,17 +181,37 @@ class syntaxer :
 
   def newdeclaration(self) :
     if self.token().lexeme == '(' :
+      if self.semcheck :
+        semantic.opush('(')
+        semantic.bal()
       self.tkgen.next()
       if self.isexpression(self.token()) :
         self.argumentlist()
       if self.token().lexeme == ')' :
+        if self.semcheck :
+          success = semantic.eal()
+          if not success[0] :
+            self.gensemerror(success[1])
+          success = semantic.newobj()
+          if not success[0] :
+            self.gensemerror(success[1])
         self.tkgen.next()
       else :
         self.generror('newdeclaration', '', 'symbol', ')')
     elif self.token().lexeme == '[' :
+      if self.semcheck :
+        semantic.opush('[')
       self.tkgen.next()
       self.expression()
       if self.token().lexeme == ']' :
+        if self.semcheck :
+          success = semantic.rbrac()
+          if not success[0] :
+            self.gensemerror(success[1])
+          else :
+            success = semantic.newarr()
+            if not success[0] :
+              self.gensemerror(success[1])
         self.tkgen.next()
       else :
         self.generror('newdeclaration', '', 'symbol',']')
@@ -199,16 +232,26 @@ class syntaxer :
           success = semantic.eal()
           if not success[0] :
             self.gensemerror(success[1])
-          succes = semantic.func()
+          success = semantic.func()
           if not success[0] :
             self.gensemerror(success[1])
         self.tkgen.next()
       else :
         self.generror('fnarrmember', '', 'symbol', ')')
     elif self.token().lexeme == '[' :
+      if self.semcheck :
+        semantic.opush('[')
       self.tkgen.next()
       self.expression()
       if self.token().lexeme == ']' :
+        if self.semcheck :
+          success = semantic.rbrac()
+          if not success[0] :
+            self.gensemerror(success[1])
+          else :
+            success = semantic.arr()
+            if not success[0] :
+              self.gensemerror(success[1])
         self.tkgen.next()
       else :
         self.generror('fnarrmember', '', 'symbol', ']')
@@ -240,23 +283,40 @@ class syntaxer :
   def expression(self) :
     t = self.token()
     if t.lexeme == '(' :
+      if self.semcheck :
+        semantic.opush('(')
       self.tkgen.next()
       self.expression()
       if self.token().lexeme == ')' :
+        if self.semcheck :
+          success = semantic.rparen()
+          if not success[0] :
+            self.gensemerror(success[1])
         self.tkgen.next()
       else :
         self.generror('expression', '', 'symbol', ')')
     elif t.lexeme == 'true' :
+      sid = self.symtab.insert(t, 'blit', symtable.data(type='bool', returntype='bool', param=None, accessmod='public'), scope='g')
+      if self.semcheck :
+        semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
     elif t.lexeme == 'false' :
+      sid = self.symtab.insert(t, 'blit', symtable.data(type='bool', returntype='bool', param=None, accessmod='public'), scope='g')
+      if self.semcheck :
+        semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
     elif t.lexeme == 'null' :
+      sid = self.symtab.insert(t, 'null', symtable.data(type='null', returntype='null', param=None, accessmod='public'), scope='g')
+      if self.semcheck :
+        semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
     elif t.lexeme == 'this' :
       self.tkgen.next()
+      if self.semcheck :
+        semantic.ipush(t)
+        semantic.iexist(self.symtab)
       if self.token().lexeme == '.' :
         self.memberrefz()
-      return
     elif t.type == 'number' :
       sid = self.symtab.insert(t, 'ilit', symtable.data(type='int', returntype='int', param=None, accessmod='public'), scope='g')
       if self.semcheck :
@@ -273,15 +333,10 @@ class syntaxer :
       self.tkgen.next()
       if self.isfnarrmember(self.token()) :
         self.fnarrmember()
-        if self.semcheck :
-          success = semantic.func()
-          if not success[0] :
-            self.gensemerror(success[1])
-      else :
-        if self.semcheck :
-          success = semantic.iexist(self.symtab)
-          if not success[0] :
-            self.gensemerror(success[1])
+      if self.semcheck :
+        success = semantic.iexist(self.symtab)
+        if not success[0] :
+          self.gensemerror(success[1])
       if self.token().lexeme == '.' :
         self.memberrefz()
     else :
@@ -299,29 +354,42 @@ class syntaxer :
     elif self.token().lexeme == 'new' :
       self.tkgen.next()
       if self.token().type == 'type' or self.token().type == 'identifier' :
+        if self.semcheck :
+          if self.token().lexeme not in self.classnames :
+            gensemerror('Type \''+typ+'\' DNE')
+          else :
+            semantic.ipush(self.token())
         self.tkgen.next()
       else :
         self.generror("assignmentexpression", '', 'type or classname')
       self.newdeclaration()
     elif self.token().lexeme == 'atoi' :
       self.tkgen.next()
-      if t.lexeme == '(' :
+      if self.token().lexeme == '(' :
         self.tkgen.next()
       else :
         self.generror('assignmentexpression', '', 'symbol', '(')
       self.expression()
       if self.token().lexeme == ')' :
+        if self.semcheck :
+          success = semantic.atoi()
+          if not success[0] :
+            self.gensemerror(success[1])
         self.tkgen.next()
       else :
         self.generror('assignmentexpression', '', 'symbol', ')')
     elif self.token().lexeme == 'itoa' :
       self.tkgen.next()
-      if t.lexeme == '(' :
+      if self.token().lexeme == '(' :
         self.tkgen.next()
       else :
         self.generror('assignmentexpression', '', 'symbol', '(')
       self.expression()
       if self.token().lexeme == ')' :
+        if self.semcheck :
+          success = semantic.itoa()
+          if not success[0] :
+            self.gensemerror(success[1])
         self.tkgen.next()
       else :
         self.generror('assignmentexpression', '', 'symbol', ')')
@@ -332,6 +400,9 @@ class syntaxer :
   def variabledeclaration(self) :
     if self.token().type == 'type' or self.token().type == 'identifier' :
       typ = self.token().lexeme
+      if self.semcheck :
+        if typ not in self.classnames :
+          gensemerror('Type \''+typ+'\' DNE')
       self.tkgen.next()
     else :
       self.generror('variabledeclaration', '', '\'type\' or classname')
@@ -341,15 +412,21 @@ class syntaxer :
     else :
       self.generror('variabledeclaration', '', 'identifier')
     if self.token().lexeme == '[' :
-      self.symtab.insert(t, 'lvar', symtable.data(type='@:'+ typ, returntype='@:'+typ, param=None, accessmod='private'))
+      var = self.symtab.insert(t, 'lvar', symtable.data(type='@:'+ typ, returntype='@:'+typ, param=None, accessmod='private'))
+      if self.semcheck :
+        semantic.vpush(var)
       self.tkgen.next()
       if self.token().lexeme == ']' :
         self.tkgen.next()
       else :
         self.generror('variabledeclaration', '', 'symbol', ']')
     else :
-      self.symtab.insert(t, 'lvar', symtable.data(type=typ, returntype=typ, param=None, accessmod='private'))
+      var = self.symtab.insert(t, 'lvar', symtable.data(type=typ, returntype=typ, param=None, accessmod='private'))
+      if self.semcheck :
+        semantic.vpush(var)
     if self.token().lexeme == '=' :
+      if self.semcheck :
+        semantic.opush('=')
       self.tkgen.next()
       self.assignmentexpression()
     self.eoe('variable declaration')
@@ -372,11 +449,20 @@ class syntaxer :
     elif t.lexeme == 'if' :
       self.tkgen.next()
       if self.token().lexeme == '(' :
+        if self.semcheck :
+          semantic.opush('(')
         self.tkgen.next()
       else :
         self.generror('', 'statement', 'symbol', '(')
       self.expression()
       if self.token().lexeme == ')' :
+        if self.semcheck :
+          success = semantic.rparen()
+          if not success[0] :
+            self.gensemerror(success[1])
+          success = semantic.checkif()
+          if not success[0] :
+            self.gensemerror(success[1])
         self.tkgen.next()
       else :
         self.generror('', 'statement', 'symbol', ')')
@@ -387,11 +473,20 @@ class syntaxer :
     elif t.lexeme == 'while' :
       self.tkgen.next()
       if self.token().lexeme == '(' :
+        if self.semcheck :
+          semantic.opush('(')
         self.tkgen.next()
       else :
         self.generror('', 'statement', 'symbol', '(')
       self.expression()
       if self.token().lexeme == ')' :
+        if self.semcheck :
+          success = semantic.rparen()
+          if not success[0] :
+            gensemerror(success[1])
+          success = semantic.checkwhile()
+          if not success[0] :
+            self.gensemerror(success[1])
         self.tkgen.next()
       else :
         self.generror('', 'statement', 'symbol', ')')
@@ -400,25 +495,41 @@ class syntaxer :
       self.tkgen.next()
       if self.isexpression(self.token()) : #if its an expression
         self.expression()
-      self.eoe('statement')
+      self.eoe('rtn')
+      if self.semcheck :
+        success = semantic.rtn()
+        if not success[0] :
+          self.gensemerror(success[1])
       return
     elif t.lexeme == 'cout' :
       self.tkgen.next()
       if self.token().lexeme == '<<' :
+        if self.semcheck :
+          semantic.iopush('<<')
         self.tkgen.next()
       else :
         self.generror('', 'statement', 'symbol', '<<')
       self.expression()
-      self.eoe('statement')
+      self.eoe('rtn')
+      if self.semcheck :
+        success = semantic.io()
+        if not success[0] :
+          self.gensemerror(success[1])
       return
     elif t.lexeme == 'cin' :
       self.tkgen.next()
       if self.token().lexeme == '>>' :
+        if self.semcheck :
+          semantic.iopush('>>')
         self.tkgen.next()
       else :
         self.generror('', 'statement', 'symbol', '>>')
       self.expression()
-      self.eoe('statement')
+      self.eoe('rtn')
+      if self.semcheck :
+        success = semantic.io()
+        if not success[0] :
+          self.gensemerror(success[1])
       return
     elif t.lexeme == 'spawn' :
       self.tkgen.next()
@@ -469,6 +580,10 @@ class syntaxer :
     while self.isstatement(self.token()) :
       self.statement()
     if self.token().lexeme == '}' :
+      if self.semcheck :
+        success = semantic.rtn(True)
+        if not success[0] :
+          self.gensemerror(success[1])
       self.tkgen.next()
     else :
       self.generror('declaration', 'methodbody', 'symbol', '}')
@@ -477,7 +592,7 @@ class syntaxer :
     if self.token().type == 'identifier' :
       classname = self.token().lexeme
       self.classnames.append(classname)
-      self.symtab.insert(self.token(), 'class')
+      self.symtab.insert(self.token(), 'class', symtable.data('class', '', '', ''))
       self.tkgen.next()
       return classname
     else :
@@ -486,6 +601,10 @@ class syntaxer :
   def constructordeclaration(self) :
     if self.token().type == 'identifier' :
       t = self.token()
+      if self.semcheck :
+        success = semantic.cdec(t)
+        if not success[0] :
+          self.gensemerror(success[1])
       self.tkgen.next()
     else :
       self.generror('', 'constructordeclaration', 'classname')
@@ -504,12 +623,17 @@ class syntaxer :
       self.generror('declaration', 'constructordeclaration', 'symbol', ')')
     self.symtab.insert(t, 'xtor', symtable.data(type='method', returntype=t.lexeme, param=param, accessmod='public'))
     self.symtab.scoper(t.lexeme)
+    if self.semcheck :
+      semantic.rtnpush(t.lexeme, 'xtor')
     self.methodbody()
     self.symtab.scoper()
 
   def parameter(self) :
     if self.token().type == 'type' or self.token().type == 'identifier' :
       typ = self.token().lexeme
+      if self.semcheck :
+        if typ not in self.classnames :
+          self.gensemerror('Type \''+typ+'\' DNE')
       self.tkgen.next()
     else :
       self.generror('parameter', '', 'type')  
@@ -551,22 +675,24 @@ class syntaxer :
       else :
         self.generror('declaration', 'field_declaration', 'symbol', ')')
       self.symtab.scoper(t.lexeme)
+      if self.semcheck :
+        semantic.rtnpush(typ, 'func')
       self.methodbody()
       self.symtab.scoper()
       return
-    self.symtab.insert(t, 'ivar', symtable.data(typ, typ, None, mod))
     if self.token().lexeme == '[' :
+      typ = '@:' + typ
       self.tkgen.next()
       if self.token().lexeme == ']' :
         self.tkgen.next()
       else :
         self.generror('declaration', 'field_declaration', 'symbol', ']')
-      if self.token().lexeme == '=' :
-        self.tkgen.next()
-        self.assignmentexpression()
-      self.eoe('field_declaration')
-      return
+    var = self.symtab.insert(t, 'ivar', symtable.data(typ, typ, None, mod))
+    if self.semcheck :
+      semantic.vpush(var)
     if self.token().lexeme == '=' :
+      if self.semcheck :
+        semantic.opush('=')
       self.tkgen.next()
       self.assignmentexpression()
       self.eoe('field_declaration')
@@ -584,6 +710,9 @@ class syntaxer :
       self.generror('declaration', 'class_member_declaration', 'modifier')
     if self.token().type == 'type' or self.token().type == 'identifier' :
       typ = self.token().lexeme
+      if self.semcheck :
+        if typ not in self.classnames :
+          self.gensemerror('Type \''+typ+'\' DNE')
       self.tkgen.next()
     else :
       self.generror('declaration', 'class_member_declaration', 'type')
@@ -638,6 +767,8 @@ class syntaxer :
     else :
       self.generror('compilation_unit', 'main_declaration', 'symbol', ')')
     self.symtab.scoper('main')
+    if self.semcheck :
+      semantic.rtnpush('void', 'main')
     self.methodbody()
     self.symtab.scoper()
     if self.token().type != 'EOF' :
