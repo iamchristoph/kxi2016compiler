@@ -3,17 +3,45 @@ import lexer
 from collections import namedtuple
 import semantic
 
-
+DEBUG = True
 
 class symtable :
-  symbol = namedtuple('sym', ['scope', 'symid', 'value', 'kind', 'data'])
-  data = namedtuple('data', ['type', 'returntype', 'param', 'accessmod'])
+  #symbol = namedtuple('sym', ['scope', 'symid', 'value', 'kind', 'data'])
+  class symbol :
+    def __init__(self, scope, symid, val, kind, data) :
+      self.scope = scope
+      self.symid = symid
+      self.value = val
+      self.kind = kind
+      self.data = data
+    def __repr__(self) :
+      return 'symid: ' + self.symid + ' scope: ' + self.scope + ' value: ' + self.value + ' kind: ' + self.kind + '\ndata: { '\
+       + self.data.__repr__() + '}\n'  
+  class data :
+    def __init__(self, typ, returntype, param, accessmod, size=0, offset=0) :
+      self.type = typ     
+      self.returntype = returntype
+      self.param = param
+      self.accessmod = accessmod
+      self.size = size
+      self.offset = offset
+    def __repr__(self) :
+      return 'type: ' + self.type + ' r-type: ' + self.returntype + ' param: [' + self.param.__repr__() + ']\n\taccess: '\
+       + self.accessmod.__repr__() + ' size: ' + str(self.size) + ' offset: ' + str(self.offset)
+  #data = namedtuple('data', ['type', 'returntype', 'param', 'accessmod', 'size', 'offset'])
   def __init__(self, d=False) :
     self.debug = d
     self.table = {}
     self.isfull = False
     self.scope = 'g'
     self.currentid = 100
+
+  def  symfromscope(self, scope) :
+    l ={}
+    for _id, sym in self.table.iteritems() :
+      if sym.scope == scope :
+        l[_id] = sym
+    return l
 
   def idsymfromlex(self, lexem) :
     for _id, sym in self.table.iteritems() :
@@ -98,7 +126,7 @@ class syntaxer :
     self.token = self.lexer.getToken
     self.nexttoken = self.lexer.getNext
     self.tkgen = self.lexer.tokengenerator
-    self.classnames = ['int', 'char', 'bool', 'void', 'sym']
+    self.classnames = set(['int', 'char', 'bool', 'void', 'sym'])
     self.symtab = symtable(d)
     self.semcheck = scheck
 
@@ -296,17 +324,17 @@ class syntaxer :
       else :
         self.generror('expression', '', 'symbol', ')')
     elif t.lexeme == 'true' :
-      sid = self.symtab.insert(t, 'blit', symtable.data(type='bool', returntype='bool', param=None, accessmod='public'), scope='g')
+      sid = self.symtab.insert(t, 'blit', symtable.data(typ='bool', returntype='bool', param=None, accessmod='public'), scope='g')
       if self.semcheck :
         semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
     elif t.lexeme == 'false' :
-      sid = self.symtab.insert(t, 'blit', symtable.data(type='bool', returntype='bool', param=None, accessmod='public'), scope='g')
+      sid = self.symtab.insert(t, 'blit', symtable.data(typ='bool', returntype='bool', param=None, accessmod='public'), scope='g')
       if self.semcheck :
         semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
     elif t.lexeme == 'null' :
-      sid = self.symtab.insert(t, 'null', symtable.data(type='null', returntype='null', param=None, accessmod='public'), scope='g')
+      sid = self.symtab.insert(t, 'null', symtable.data(typ='null', returntype='null', param=None, accessmod='public'), scope='g')
       if self.semcheck :
         semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
@@ -318,12 +346,12 @@ class syntaxer :
       if self.token().lexeme == '.' :
         self.memberrefz()
     elif t.type == 'number' :
-      sid = self.symtab.insert(t, 'ilit', symtable.data(type='int', returntype='int', param=None, accessmod='public'), scope='g')
+      sid = self.symtab.insert(t, 'ilit', symtable.data(typ='int', returntype='int', param=None, accessmod='public'), scope='g')
       if self.semcheck :
         semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
     elif t.type == 'character' :
-      sid = self.symtab.insert(t, 'clit', symtable.data(type='char', returntype='char', param=None, accessmod='public'), scope='g')
+      sid = self.symtab.insert(t, 'clit', symtable.data(typ='char', returntype='char', param=None, accessmod='public'), scope='g')
       if self.semcheck :
         semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
@@ -412,7 +440,7 @@ class syntaxer :
     else :
       self.generror('variabledeclaration', '', 'identifier')
     if self.token().lexeme == '[' :
-      var = self.symtab.insert(t, 'lvar', symtable.data(type='@:'+ typ, returntype='@:'+typ, param=None, accessmod='private'))
+      var = self.symtab.insert(t, 'lvar', symtable.data(typ='@:'+ typ, returntype='@:'+typ, param=None, accessmod='private'))
       if self.semcheck :
         semantic.vpush(var)
       self.tkgen.next()
@@ -421,7 +449,7 @@ class syntaxer :
       else :
         self.generror('variabledeclaration', '', 'symbol', ']')
     else :
-      var = self.symtab.insert(t, 'lvar', symtable.data(type=typ, returntype=typ, param=None, accessmod='private'))
+      var = self.symtab.insert(t, 'lvar', symtable.data(typ=typ, returntype=typ, param=None, accessmod='private'))
       if self.semcheck :
         semantic.vpush(var)
     if self.token().lexeme == '=' :
@@ -591,10 +619,10 @@ class syntaxer :
   def classname(self) :
     if self.token().type == 'identifier' :
       classname = self.token().lexeme
-      self.classnames.append(classname)
-      self.symtab.insert(self.token(), 'class', symtable.data('class', '', '', ''))
+      self.classnames.add(classname)
+      classsymid = self.symtab.insert(self.token(), 'class', symtable.data('class', '', '', '', size=0))
       self.tkgen.next()
-      return classname
+      return classsymid, classname
     else :
       self.generror('name', 'classname', 'identifier')
 
@@ -621,7 +649,7 @@ class syntaxer :
       self.tkgen.next()
     else :
       self.generror('declaration', 'constructordeclaration', 'symbol', ')')
-    self.symtab.insert(t, 'xtor', symtable.data(type='method', returntype=t.lexeme, param=param, accessmod='public'))
+    self.symtab.insert(t, 'xtor', symtable.data(typ='method', returntype=t.lexeme, param=param, accessmod='public'))
     self.symtab.scoper(t.lexeme)
     if self.semcheck :
       semantic.rtnpush(t.lexeme, 'xtor')
@@ -688,6 +716,7 @@ class syntaxer :
       else :
         self.generror('declaration', 'field_declaration', 'symbol', ']')
     var = self.symtab.insert(t, 'ivar', symtable.data(typ, typ, None, mod))
+    #self.symtab.get(cid).members.append(var)
     if self.semcheck :
       semantic.vpush(var)
     if self.token().lexeme == '=' :
@@ -699,7 +728,7 @@ class syntaxer :
       return
     self.eoe('field_declaration')
 
-  def classmemberdeclaration(self) :
+  def classmemberdeclaration(self, cid) :
     if self.token().type == 'modifier' :
       mod = self.token().lexeme
       self.tkgen.next()
@@ -728,14 +757,14 @@ class syntaxer :
       self.tkgen.next()
     else :
       self.generror('declaration', 'class_declaration', 'keyword', 'class')
-    cname = self.classname()
+    cid, cname = self.classname()
     if self.token().lexeme == '{' :
       self.symtab.scoper(cname)
       self.tkgen.next()
     else :
       self.generror('declaration', 'class_declaration', 'symbol', '{')
     while self.token().lexeme != '}' :
-      self.classmemberdeclaration()
+      self.classmemberdeclaration(cid)
     if self.token().lexeme == '}' :
       self.symtab.scoper()
       self.tkgen.next()
@@ -778,6 +807,7 @@ class syntaxer :
     self.compilationunit()
     if self.token().type == 'EOF' :
       del self.lexer 
+    self.getoffsets()
     self.semcheck = True
     self.symtab.isfull = True
     self.lexer = lexer.lexer(self.thefilename, False)
@@ -786,6 +816,22 @@ class syntaxer :
     self.nexttoken = self.lexer.getNext
     semantic.symtab = self.symtab
     self.compilationunit()
+    semantic.Iprint()
+    for n in self.classnames :
+      print self.symtab.idsymfromlexscope(n, 'g')
+      print n + '\n', self.symtab.symfromscope('g.'+ n)
+
+  def getoffsets(self) :
+    for n in self.classnames :
+      classid = self.symtab.idsymfromlexscope(n, 'g')
+      for _id, sym in self.symtab.symfromscope('g.'+ n).iteritems() :
+        if sym.kind == 'ivar' :
+          if sym.data.type == 'char' :
+            sym.data.size = 1
+          else:
+            sym.data.size = 4
+          sym.data.offset = classid[1].data.size
+          classid[1].data.size +=sym.data.size
 
 if __name__ == '__main__' :
   import sys
@@ -797,7 +843,7 @@ if __name__ == '__main__' :
   #analyzer = lexer.lexer(fname)#
   #token = analyzer.tokengenerator
   #getToken = analyzer.getToken
-  syntax = syntaxer(fname, False, False)
+  syntax = syntaxer(fname, False, DEBUG)
   syntax.run()
   #while token.next() :
   #  getToken(debug)

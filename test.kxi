@@ -32,6 +32,7 @@ class rabuf{
     char cu = itoa(hit);
     int goback;
     char A = 'A';
+    this.sucking = blah() > this.ex;
     a = goback * hit;
     {
       chitty;

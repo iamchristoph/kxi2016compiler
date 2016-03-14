@@ -1,6 +1,6 @@
 from syntaxer import symtable
 
-DEBUG = False
+DEBUG = True
 ops = {'(': 0, ')': 0, '[': 0, ']': 0, '=': 1, 'or': 2, 'and': 2, '==': 3, '!=': 3, '<': 4, '<=': 4, '>': 4, '>=': 4, '+': 5, '-': 5, '*': 6, '/': 6}
 var = ('lvar', 'ivar', 'rlvar', 'rivar')
 types = ('int', 'char', 'bool', 'void', 'sym')
@@ -27,7 +27,14 @@ class stack :
 SAS = stack()
 OPS = stack()
 RTN = stack()
-#symtab 
+Icode = []
+
+def Iprint() :
+  for quad in Icode :
+    for i in quad :
+      if i :
+        print i,
+    print ' '
 
 def opop() :
   op = OPS.pop()
@@ -41,139 +48,164 @@ def opop() :
     elif l.data.data.type != r.data.data.returntype and r.data.data.returntype != 'null':
       return False, 'Cannot assign ' + r.data.data.returntype + ' to ' + l.data.data.type
     else :
+      Icode.append([None, 'MOV', r.data.symid, l.data.symid, None, ';  ' + l.value + ' = ' + r.value]) # r -> l
       return True,
   elif op == '+' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#+', l.data.symid, r.data.symid
-    if l.data.data.type != 'int' :
-      return False, 'Cannot add type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != 'int' :
-      return False, 'Cannot add type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype != 'int' :
+      return False, 'Cannot add type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != 'int' :
+      return False, 'Cannot add type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else :
-      return pushtemp(l.data.data.type, l.data.data.type),
+      res =  pushtemp(l.data.data.returntype, l.data.data.returntype)
+      Icode.append([None, 'ADD', r.data.symid, l.data.symid, res[1],  ';  ' + res[1] + ' = ' + l.value + ' + ' + r.value]) # r + l -> res      
+      return res
   elif op == '-' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#-', l.data.symid, r.data.symid
-    if l.data.data.type != 'int' :
-      return False, 'Cannot subtract type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != 'int' :
-      return False, 'Cannot subtract type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype != 'int' :
+      return False, 'Cannot subtract type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != 'int' :
+      return False, 'Cannot subtract type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else :
-      return pushtemp(l.data.data.type, l.data.data.type),
+      res =  pushtemp(l.data.data.returntype, l.data.data.returntype)
+      Icode.append([None, 'SUB', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' - ' + r.value]) # r - l -> res      
+      return res
   elif op == '*' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#*', l.data.symid, r.data.symid
-    if l.data.data.type != 'int' :
-      return False, 'Cannot multiply type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != 'int' :
-      return False, 'Cannot multiply type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype != 'int' :
+      return False, 'Cannot multiply type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != 'int' :
+      return False, 'Cannot multiply type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else :
-      return pushtemp(l.data.data.type, l.data.data.type),
+      res =  pushtemp(l.data.data.returntype, l.data.data.returntype)
+      Icode.append([None, 'MUL', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' * ' + r.value]) # r * l -> res      
+      return res
   elif op == '/' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#/', l.data.symid, r.data.symid
-    if l.data.data.type != 'int' :
-      return False, 'Cannot divide type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != 'int' :
-      return False, 'Cannot divide type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype != 'int' :
+      return False, 'Cannot divide type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != 'int' :
+      return False, 'Cannot divide type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else :
-      return pushtemp(l.data.data.type, l.data.data.type),
+      res =  pushtemp(l.data.data.returntype, l.data.data.returntype)
+      Icode.append([None, 'DIV', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' / ' + r.value]) # r / l -> res      
+      return res
   elif op == 'or' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#or', l.data.symid, r.data.symid
-    if l.data.data.type != 'bool' :
-      return False, 'Operator \'or\' cannot compare type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != 'bool' :
-      return False, 'Operator \'or\' cannot compare type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype != 'bool' :
+      return False, 'Operator \'or\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != 'bool' :
+      return False, 'Operator \'or\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else:
-      return pushtemp('bool', 'bool')
+      res =  pushtemp('bool', 'bool')
+      Icode.append([None, 'OR', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' or ' + r.value]) # r or l -> res      
+      return res
   elif op == 'and' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#and', l.data.symid, r.data.symid
-    if l.data.data.type != 'bool' :
-      return False, 'Operator \'and\' cannot compare type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != 'bool' :
-      return False, 'Operator \'and\' cannot compare type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype != 'bool' :
+      return False, 'Operator \'and\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != 'bool' :
+      return False, 'Operator \'and\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else:
-      return pushtemp('bool', 'bool')
+      res =  pushtemp('bool', 'bool')
+      Icode.append([None, 'AND', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' and ' + r.value]) # r and l -> res      
+      return res
   elif op == '==' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#==', l.data.symid, r.data.symid
-    if l.data.data.type not in types :
-      return False, 'Operator \'==\' cannot compare type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != l.data.data.type :
-      return False, 'Operator \'==\' cannot compare type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype not in types :
+      return False, 'Operator \'==\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != l.data.data.returntype :
+      return False, 'Operator \'==\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else:
-      return pushtemp('bool', 'bool')
+      res =  pushtemp('bool', 'bool')
+      Icode.append([None, 'EQ', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' == ' + r.value]) # r == l -> res      
+      return res
   elif op == '!=' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#!=', l.data.symid, r.data.symid
-    if l.data.data.type not in types :
-      return False, 'Operator \'!=\' cannot compare type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != l.data.data.type :
-      return False, 'Operator \'!=\' cannot compare type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype not in types :
+      return False, 'Operator \'!=\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != l.data.data.returntype :
+      return False, 'Operator \'!=\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else:
-      return pushtemp('bool', 'bool')
+      res =  pushtemp('bool', 'bool')
+      Icode.append([None, 'NE', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' != ' + r.value]) # r != l -> res      
+      return res
   elif op == '<' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#<', l.data.symid, r.data.symid
-    if l.data.data.type != 'int' :
-      return False, 'Operator \'<\' cannot compare type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != l.data.data.type :
-      return False, 'Operator \'<\' cannot compare type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype != 'int' :
+      return False, 'Operator \'<\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != l.data.data.returntype :
+      return False, 'Operator \'<\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else:
-      return pushtemp('bool', 'bool')
+      res =  pushtemp('bool', 'bool')
+      Icode.append([None, 'LT', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' < ' + r.value]) # l < r -> res      
+      return res
   elif op == '<=' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#<=', l.data.symid, r.data.symid
-    if l.data.data.type != 'int' :
-      return False, 'Operator \'<=\' cannot compare type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != l.data.data.type :
-      return False, 'Operator \'<=\' cannot compare type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype != 'int' :
+      return False, 'Operator \'<=\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != l.data.data.returntype :
+      return False, 'Operator \'<=\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else:
-      return pushtemp('bool', 'bool')
+      res =  pushtemp('bool', 'bool')
+      Icode.append([None, 'LE', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' <= ' + r.value]) # l <= r -> res      
+      return res
   elif op == '>' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#>', l.data.symid, r.data.symid
-    if l.data.data.type != 'int' :
-      return False, 'Operator \'>\' cannot compare type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != l.data.data.type :
-      return False, 'Operator \'>\' cannot compare type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype != 'int' :
+      return False, 'Operator \'>\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != l.data.data.returntype :
+      return False, 'Operator \'>\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.datareturn.type
     else:
-      return pushtemp('bool', 'bool')
+      res =  pushtemp('bool', 'bool')
+      Icode.append([None, 'GT', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' > ' + r.value]) # l > r -> res      
+      return res
   elif op == '>=' :
     r = SAS.pop()
     l = SAS.pop()
     if DEBUG :
       print '#>=', l.data.symid, r.data.symid
-    if l.data.data.type != 'int' :
-      return False, 'Operator \'>=\' cannot compare type ' + l.data.data.type + ' and ' + r.data.data.type
-    elif r.data.data.type != l.data.data.type :
-      return False, 'Operator \'>=\' cannot compare type ' + r.data.data.type + ' and ' + l.data.data.type
+    if l.data.data.returntype != 'int' :
+      return False, 'Operator \'>=\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
+    elif r.data.data.returntype != l.data.data.returntype :
+      return False, 'Operator \'>=\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else:
-      return pushtemp('bool', 'bool')
+      res =  pushtemp('bool', 'bool')
+      Icode.append([None, 'GE', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' >= ' + r.value]) # l >= r -> res      
+      return res
   else :
     if DEBUG :
       print 'OP ', op
@@ -197,11 +229,11 @@ class SAR :
     #self.symid
 
 def pushtemp(typ, rtyp, kind='temp', par=None) :
-  temp = symtab.insert(None, kind, override=True, data=symtable.data(type=typ, returntype=rtyp, param=par, accessmod='private'))
+  temp = symtab.insert(None, kind, override=True, data=symtable.data(typ=typ, returntype=rtyp, param=par, accessmod='private'))
   SAS.push(SAR('#TPUSH', symtab.get(temp)))
   if DEBUG :
     print '#TPUSH', SAS.top().data.symid
-  return True, 
+  return True, temp
 
 def ipush(token) :
   SAS.push(SAR('ipush', token))
@@ -270,17 +302,18 @@ def rexist() :
     if symbol.data.accessmod == 'public' or objec.data.kind == 'this' :
       if objec.data.kind == 'this' :
         #print typ, rtyp, 'r'+ symbol.kind, 'this'
-        pushtemp(typ, rtyp, 'r'+ symbol.kind, 'this')
+        ref = pushtemp(typ, rtyp, 'r'+ symbol.kind, 'this')
       else :
         #print typ, rtyp, 'r'+ symbol.kind, member.data[1]
-        pushtemp(typ, rtyp, 'r'+ symbol.kind, member.data[1])
+        ref = pushtemp(typ, rtyp, 'r'+ symbol.kind, member.data[1])
     else :
       return False, 'The reference ' + member.value + ' DNE as a public member'
   else :
     return False, 'The reference ' + member.value + ' DNE'
   if DEBUG :
     print '#REXIST', SAS.top().data.symid
-  return True,
+  Icode.append([None, 'REF', objec.data.symid, symbol.symid, ref[1], ';  ' + ref[1] + ' = ' + objec.value + '.' + symbol.value]) # l.r -> ref      
+  return ref 
 
 def opush(op) :
   val = ops.get(op)
@@ -434,7 +467,7 @@ def checkwhile() :
 
 def iopush(op) :
   if op == '<<' or op == '>>' :
-    RTN.push(('io', ('int', 'char')))
+    RTN.push((op, ('int', 'char')))
 
 def rtnpush(typ, m) :
   RTN.push((m, (typ, False)))
@@ -442,13 +475,17 @@ def rtnpush(typ, m) :
 def io() :
   op = RTN.pop()
   val = SAS.pop()
-  if op[0] != 'io' :
+  if not(op[0] == '<<' or op[0] == '>>') :
     return False, 'IO statement expected, got ' + op[0]
   elif val.data.data.returntype not in op[1] :
     return False, 'IO statement must have operand of types \'int\' or \'char\' got ' + val.data.data.returntype
   else :
     if DEBUG :
       print '#' + op[0] + ' ' + val.data.data.returntype
+    if op[0] == '<<' :
+      Icode.append([None, 'WRITE', val.data.symid, val.data.data.returntype, None, ';  cout << ' + val.value + '(' + val.data.data.returntype + ')'] )
+    elif op[0] == '>>' :
+      Icode.append([None, 'READ', val.data.symid, val.data.data.returntype, None, ';  cin >> ' + val.value + '(' + val.data.data.returntype + ')' ])
     return True,
 
 def rtn(default=False) :
