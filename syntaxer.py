@@ -3,7 +3,7 @@ import lexer
 from collections import namedtuple
 import semantic
 
-DEBUG = True
+DEBUG = False
 
 class symtable :
   #symbol = namedtuple('sym', ['scope', 'symid', 'value', 'kind', 'data'])
@@ -57,14 +57,17 @@ class symtable :
     return None
   def get(self, symid) :
     return self.table.get(symid)
-  def getid(self, kind) :
+  def getid(self, kind, full=False) :
     self.currentid += 1
     c = kind[0].upper()
     if kind == 'ilit' :
       c = 'N'
     if kind == 'clit' :
       c = 'H'
+    if full :
+      c = kind
     return c + str(self.currentid)
+
   def insert(self, t, kind, data=None, scope=None, override=False) :
     if not self.isfull or override :
       if not override :
@@ -491,17 +494,26 @@ class syntaxer :
           success = semantic.checkif()
           if not success[0] :
             self.gensemerror(success[1])
+          else :
+            b = success[1]
         self.tkgen.next()
       else :
         self.generror('', 'statement', 'symbol', ')')
+      if self.semcheck :
+        semantic.iif(b)
       self.statement()
+      if self.semcheck :
+        semantic.iskip(self.token().lexeme)
       if self.token().lexeme == 'else' :
         self.tkgen.next()
-        self.statement
+        self.statement()
+        if self.semcheck :
+          semantic.ielse()
     elif t.lexeme == 'while' :
       self.tkgen.next()
       if self.token().lexeme == '(' :
         if self.semcheck :
+          semantic.ibegin()
           semantic.opush('(')
         self.tkgen.next()
       else :
@@ -515,10 +527,16 @@ class syntaxer :
           success = semantic.checkwhile()
           if not success[0] :
             self.gensemerror(success[1])
+          else :
+            b = success[1]
         self.tkgen.next()
       else :
         self.generror('', 'statement', 'symbol', ')')
+      if self.semcheck :
+        semantic.iwhile(b)
       self.statement()
+      if self.semcheck :
+        semantic.iend()
     elif t.lexeme == 'return' :
       self.tkgen.next()
       if self.isexpression(self.token()) : #if its an expression
@@ -698,7 +716,10 @@ class syntaxer :
         param = self.parameterlist()
       if self.token().lexeme == ')' :
         self.symtab.scoper()
-        self.symtab.insert(t, 'method', symtable.data('method', typ, param, mod))
+        methodid = self.symtab.insert(t, 'method', symtable.data('method', typ, param, mod))
+        symbol = self.symtab.get(methodid)
+        if self.semcheck :
+          semantic.Icode.append([symbol.symid, 'FUNC', symbol.symid, None, None, ';  ' + symbol.data.returntype + ' ' + symbol.value + '(' + str(symbol.data.param) + ')']) # ret func(param)  
         self.tkgen.next()
       else :
         self.generror('declaration', 'field_declaration', 'symbol', ')')
@@ -783,7 +804,9 @@ class syntaxer :
     else :
       self.generror('compilation_unit', 'main_declaration', 'keyword', 'kxi2016')
     if self.token().lexeme == 'main' :
-      self.symtab.insert(self.token(), 'main', symtable.data(None, returntype='void', param=[], accessmod='public'))
+      main = self.symtab.insert(self.token(), 'main', symtable.data(None, returntype='void', param=[], accessmod='public'))
+      if self.semcheck :
+        semantic.Icode.append([main, 'FUNC', main, None, None, '; void kxi2016 main()'])
       self.tkgen.next()
     else :
       self.generror('compilation_unit', 'main_declaration', 'keyword', 'main')
@@ -817,9 +840,9 @@ class syntaxer :
     semantic.symtab = self.symtab
     self.compilationunit()
     semantic.Iprint()
-    for n in self.classnames :
-      print self.symtab.idsymfromlexscope(n, 'g')
-      print n + '\n', self.symtab.symfromscope('g.'+ n)
+    #for n in self.classnames :
+    #  print self.symtab.idsymfromlexscope(n, 'g')
+    #  print n + '\n', self.symtab.symfromscope('g.'+ n)
 
   def getoffsets(self) :
     for n in self.classnames :

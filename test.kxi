@@ -15,6 +15,9 @@ class _bufar{
     this.s = x;
     return stuff;
   }
+  public void print(int i) {
+    cout << i;
+  }
 }
 
 class rabuf{
@@ -36,19 +39,37 @@ class rabuf{
     a = goback * hit;
     {
       chitty;
-      if (uck == 5) {} else hit/ex;
+      if (uck == 5) {
+        if (sucking) {
+          cout << 'Z';
+        } else {
+          cout << 'A';
+        }
+        chit = 'Z';
+      } else {
+        a = hit/ex + 5;
+        chit = itoa(a);
+        if (5<4)
+          cout << 'Y';
+        else
+          cin >> chit;
+      }
     }
-    if (5 < 4) {}
-    while (sucking) {
-      cout << goof[1];
+    if (5 < 4) {
+      while (sucking) {
+        cout << goof[1];
+      }
     }
     return a;
   }
   public _bufar buffy;
   public rabuf rabi;
+  public rabuf ra[];
   public int foo[];
   public int goo[] = foo;
-  rabuf (int hit, int shit){}
+  rabuf (int hit, int shit){
+    goof[10] = 'c';
+  }
 } 
 void kxi2016 main () {
   int cho = 5;
@@ -62,10 +83,13 @@ void kxi2016 main () {
   cout << a;
   cho = buf.muck( rab).ex;
   cho = rab.blah();
-  buf.muck(rab).ex = cho;
-  rab.bar(cho + buf.bubu, rab.ex + cho);
+  a = buf.muck(rab).ex = cho;
+  a = rab.bar(cho + buf.bubu, rab.ex + cho);
   rab.goo = new int[cho + 5 / 4 - 1];
   rab.goo[5] = 3;
+  rab = new rabuf(1, 2);
+  rab.ra = new rabuf[5];
+  rab.ra[2] = new rabuf(1, 2);
   //if (cho) rab[cho] = 5;
   //x = y.f(k, g) + g * r;
 }
