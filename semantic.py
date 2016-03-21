@@ -29,9 +29,19 @@ OPS = stack()
 RTN = stack()
 LBL = stack()
 lblQ = []
+statcon = None
+statcons = {}
 Icode = [['Start', 'FRAME', 'main', 0, None, ';  Frame main'], \
-          [None, 'CALL', 'main', None, None, None], \
-          ['End', 'STOP', None, None, None, None]]
+          [None, 'CALL', 'main', None, None, ''], \
+          ['End', 'STOP', None, None, None, '']]
+
+def addscons() :
+  for staticinit in statcons.iteritems() :
+    sym = symtab.get(staticinit[0])
+    print sym, sym.symid
+    backpatch(sym.data.type[2:], sym.symid)
+    for instruction in staticinit[1] :
+      Icode.append(instruction)
 
 def Iprint() :
   for quad in Icode :
@@ -53,7 +63,10 @@ def opop() :
       return False, 'Cannot assign ' + r.data.data.returntype + ' to ' + l.data.data.type
     else :
       res =  pushtemp(l.data.data.returntype, l.data.data.returntype)
-      Icode.append([LBL.pop(), 'MOV', r.data.symid, l.data.symid, None, ';  ' + l.value + ' = ' + r.value]) # r -> l
+      if statcon and len(symtab.scope.split('.')) == 2 :
+        statcons[statcon].append([LBL.pop(), 'MOV', r.data.symid, l.data.symid, None, ';  ' + l.value + '(offset=' + str(l.data.data.offset) + ') = ' + r.value]) # r -> l
+      else :
+        Icode.append([LBL.pop(), 'MOV', r.data.symid, l.data.symid, None, ';  ' + l.value + '(offset=' + str(l.data.data.offset) + ') = ' + r.value]) # r -> l
       return True,
   elif op == '+' :
     r = SAS.pop()
@@ -243,9 +256,15 @@ def pushtemp(typ, rtyp, kind='temp', par=None) :
     sym.data.size = 1
   else:
     sym.data.size = 4
-  sym.data.offset = -owner[1].data.size
-  owner[1].data.size += sym.data.size
-  Icode.append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner[1].value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
+  if statcon and owner[1].scope == 'g':
+    owner = symtab.get(statcon)
+    sym.data.offset = -owner.data.size
+    owner.data.size += sym.data.size
+    statcons[statcon].append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner.value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
+  else :
+    sym.data.offset = -owner[1].data.size
+    owner[1].data.size += sym.data.size
+    Icode.append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner[1].value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
   if DEBUG :
     print '#TPUSH', SAS.top().data.symid
   return True, temp
@@ -354,6 +373,9 @@ def rexist() :
         if symbol.kind == 'method' :
           Icode.append([LBL.pop(), 'FRAME', symbol.symid, objec.data.symid, param, ';  ' + symbol.data.returntype  + ' ' + symbol.value + '(' + str(symbol.data.param) + ')']) 
         elif symbol.kind == 'xtor' :
+          Icode.append([LBL.pop(), 'FRAME', clasname, rsym.symid, None, ';  static initializer for class ' + clasname])
+          Icode.append([LBL.pop(), 'CALL', clasname, None, None, ''])
+          Icode.append([LBL.pop(), 'PEEK', rsym.symid, None, None, ''])
           Icode.append([LBL.pop(), 'FRAME', symbol.symid, rsym.symid, param, ';  ' + symbol.data.returntype  + ' ' + symbol.value + '(' + str(symbol.data.param) + ')'])   
         else :
           return False, 'How the hell did you ever get to this line! (rexist)'
@@ -496,6 +518,7 @@ def func() :
 
 def matchfunc(funcsar, symbol) :
   #print funcsar.data[0].data, funcsar.data[1].data, symbol.data.param
+  funcsar.data[1].data.reverse()
   if symbol.kind == 'class' :
     return False, 'Class is not callable, use new keyword for constructor'
   if funcsar.data[0].value != symbol.value :

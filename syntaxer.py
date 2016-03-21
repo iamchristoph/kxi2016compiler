@@ -92,11 +92,19 @@ class symtable :
         self.display(_id)
       return _id
     else :
-      for _id, sym in self.table.iteritems() :
-        if sym.value == t.lexeme :
-          if self.debug :
-            self.display(_id)
-          return _id
+      scope = self.scope
+      while True :
+        idsym = self.idsymfromlexscope(t.lexeme, scope)
+        if idsym :
+          _id, symbol = idsym
+          break
+        elif scope == 'g' :
+          return False, 'The variable ' + i.value + ' DNE'
+        else :
+          scope = semantic.widen(scope)
+      if self.debug :
+        self.display(_id)
+      return _id
 
   def scoper(self, name=None) :
     if name :
@@ -667,10 +675,11 @@ class syntaxer :
       self.tkgen.next()
     else :
       self.generror('declaration', 'constructordeclaration', 'symbol', ')')
-    self.symtab.insert(t, 'xtor', symtable.data(typ='method', returntype=t.lexeme, param=param, accessmod='public'))
-    self.symtab.scoper(t.lexeme)
+    xid = self.symtab.insert(t, 'xtor', symtable.data(typ='method', returntype=t.lexeme, param=param, accessmod='public'))
     if self.semcheck :
       semantic.rtnpush(t.lexeme, 'xtor')
+      semantic.Icode.append([xid, 'FUNC', xid, None, None, ';  Contructor for class ' + t.lexeme])
+    self.symtab.scoper(t.lexeme)
     self.methodbody()
     self.symtab.scoper()
 
@@ -737,7 +746,6 @@ class syntaxer :
       else :
         self.generror('declaration', 'field_declaration', 'symbol', ']')
     var = self.symtab.insert(t, 'ivar', symtable.data(typ, typ, None, mod))
-    #self.symtab.get(cid).members.append(var)
     if self.semcheck :
       semantic.vpush(var)
     if self.token().lexeme == '=' :
@@ -758,10 +766,18 @@ class syntaxer :
       return
     else :
       self.generror('declaration', 'class_member_declaration', 'modifier')
-    if self.token().type == 'type' or self.token().type == 'identifier' :
-      typ = self.token().lexeme
+    t = self.token()
+    if t.type == 'type' or t.type == 'identifier' :
+      if self.nexttoken().lexeme == '[' :
+        typ = '@:' + self.token().lexeme
+        self.tkgen.next()
+        self.tkgen.next()
+        if self.token().lexeme != ']' :
+          self.generror('declaration', 'class_member_declaration', '\']\'')
+      else :
+        typ = t.lexeme
       if self.semcheck :
-        if typ not in self.classnames :
+        if t.lexeme not in self.classnames :
           self.gensemerror('Type \''+typ+'\' DNE')
       self.tkgen.next()
     else :
@@ -781,6 +797,9 @@ class syntaxer :
     cid, cname = self.classname()
     if self.token().lexeme == '{' :
       self.symtab.scoper(cname)
+      if self.semcheck :
+        semantic.statcon = self.symtab.insert('sc' + cname, 'staticinit', symtable.data('sc' + cname, '', '', '', size=0), override=True)
+        semantic.statcons[semantic.statcon] = [[semantic.statcon, 'FUNC', semantic.statcon, None, None, ';  static initializer for class' + cname]]
       self.tkgen.next()
     else :
       self.generror('declaration', 'class_declaration', 'symbol', '{')
@@ -789,6 +808,9 @@ class syntaxer :
     if self.token().lexeme == '}' :
       self.symtab.scoper()
       self.tkgen.next()
+      if self.semcheck :
+        semantic.statcons[semantic.statcon].append([None, 'RTN', None, None, None, '; return from static initializer for ' + cname])
+        semantic.statcon = None
     else :
       self.generror('declaration', 'class_declaration', 'symbol', '}')
 
@@ -807,6 +829,7 @@ class syntaxer :
       main = self.symtab.insert(self.token(), 'main', symtable.data(None, returntype='void', param=[], accessmod='public'))
       if self.semcheck :
         semantic.Icode.append([main, 'FUNC', main, None, None, '; void kxi2016 main()'])
+        semantic.backpatch('main', main)
       self.tkgen.next()
     else :
       self.generror('compilation_unit', 'main_declaration', 'keyword', 'main')
@@ -825,6 +848,7 @@ class syntaxer :
     self.symtab.scoper()
     if self.token().type != 'EOF' :
       self.generror('compilation_unit', '', 'EOF', '')
+    semantic.addscons()
 
   def run(self) :
     self.compilationunit()
@@ -838,7 +862,9 @@ class syntaxer :
     self.tkgen = self.lexer.tokengenerator
     self.nexttoken = self.lexer.getNext
     semantic.symtab = self.symtab
+    semantic.syntaxer = self
     self.compilationunit()
+
     semantic.Iprint()
     #for n in self.classnames :
     #  print self.symtab.idsymfromlexscope(n, 'g')
