@@ -1,0 +1,279 @@
+Start FRAME M151 ;  Frame main backpatched to M151 
+CALL M151  backpatched to M151 
+End STOP 
+M104 FUNC M104 ;  int blob(['P102', 'P103']) 
+RETURN N105 ; return int 89 from function func 
+RTN ; return from function func 
+X106 FUNC X106 ;  Contructor for class _bufar 
+RTN ; return from function xtor 
+M111 FUNC M111 ;  rabuf muck(['P110']) 
+PUSH L112 4 ;  muck.x, offset = 0 
+PUSH L113 4 ;  muck.y, offset = -4 
+PUSH T159 4 ;  muck.T159, offset = -8 
+MOV L113 L112 ;  x(offset=0) = y 
+PUSH T160 4 ;  muck.T160, offset = -12 
+ADD L113 N114 T160 ;  T160 = 5 + y 
+PUSH T161 4 ;  muck.T161, offset = -16 
+MOV T160 L112 ;  x(offset=0) = T160 
+PUSH T162 4 ;  muck.T162, offset = -20 
+MUL N115 L113 T162 ;  T162 = y * 3 
+PUSH T163 4 ;  muck.T163, offset = -24 
+DIV N116 I109 T163 ;  T163 = s / 4 
+PUSH T164 4 ;  muck.T164, offset = -28 
+SUB I109 T163 T164 ;  T164 = T163 - s 
+PUSH T165 4 ;  muck.T165, offset = -32 
+ADD T164 T162 T165 ;  T165 = T162 + T164 
+PUSH T166 4 ;  muck.T166, offset = -36 
+MOV T165 L112 ;  x(offset=0) = T165 
+PUSH T167 4 ;  muck.T167, offset = -40 
+PUSH R168 1 ;  muck.R168, offset = -44 
+REF T167 I108 R168 ;  R168 = T167.c offset = 0 
+PUSH T169 1 ;  muck.T169, offset = -45 
+MOV H117 R168 ;  R168(offset=-44) = 'c' 
+PUSH T170 4 ;  muck.T170, offset = -46 
+PUSH R171 4 ;  muck.R171, offset = -50 
+REF T170 I109 R171 ;  R171 = T170.s offset = 1 
+PUSH T172 4 ;  muck.T172, offset = -54 
+MOV L112 R171 ;  R171(offset=-50) = x 
+RETURN P110 ; return rabuf stuff from function func 
+RTN ; return from function func 
+M119 FUNC M119 ;  void print(['P118']) 
+WRITE P118 int ;  cout << i(int) 
+RTN ; return from function func 
+M124 FUNC M124 ;  int blah([]) 
+RETURN N125 ; return int 1 from function func 
+RTN ; return from function func 
+M128 FUNC M128 ;  int bar(['P126', 'P127']) 
+PUSH L129 4 ;  bar.momo, offset = 0 
+PUSH L130 4 ;  bar.a, offset = -4 
+PUSH T174 4 ;  bar.T174, offset = -8 
+ADD N131 I121 T174 ;  T174 = ex + 2 
+PUSH A175 4 ;  bar.A175, offset = -12 
+AEF I146 T174 A175 ;  goo + T174 * sizeof int (pointer) 
+PUSH T176 4 ;  bar.T176, offset = -16 
+MOV A175 L130 ;  a(offset=-4) = A175 
+PUSH L132 1 ;  bar.chit, offset = -20 
+PUSH L133 4 ;  bar.chitty, offset = -21 
+PUSH L134 4 ;  bar.uck, offset = -25 
+PUSH T177 4 ;  bar.T177, offset = -29 
+PUSH T178 4 ;  bar.T178, offset = -33 
+MOV T177 L134 ;  uck(offset=-25) = T177 
+PUSH L135 4 ;  bar.hit, offset = -37 
+PUSH L136 1 ;  bar.cu, offset = -41 
+PUSH T179 1 ;  bar.T179, offset = -42 
+PUSH T180 1 ;  bar.T180, offset = -43 
+MOV T179 L136 ;  cu(offset=-41) = T179 
+PUSH L137 4 ;  bar.goback, offset = -44 
+PUSH L138 1 ;  bar.A, offset = -48 
+PUSH T181 1 ;  bar.T181, offset = -49 
+MOV H139 L138 ;  A(offset=-48) = 'A' 
+PUSH T182 4 ;  bar.T182, offset = -50 
+PUSH R183 4 ;  bar.R183, offset = -54 
+REF T182 I122 R183 ;  R183 = T182.sucking offset = 24 
+PUSH F184 4 ;  bar.F184, offset = -58 
+FRAME M124 this ;  blah([]) 
+CALL M124 
+PEEK F184 ;  get return value 
+PUSH T185 4 ;  bar.T185, offset = -62 
+PUSH R186 4 ;  bar.R186, offset = -66 
+REF T185 I121 R186 ;  R186 = T185.ex offset = 20 
+PUSH T187 4 ;  bar.T187, offset = -70 
+GT R186 F184 T187 ;  T187 = F184 > R186 
+PUSH T188 4 ;  bar.T188, offset = -74 
+MOV T187 R183 ;  R183(offset=-54) = T187 
+PUSH T189 4 ;  bar.T189, offset = -78 
+MUL L135 L137 T189 ;  T189 = goback * hit 
+PUSH T190 4 ;  bar.T190, offset = -82 
+MOV T189 L130 ;  a(offset=-4) = T189 
+PUSH T191 4 ;  bar.T191, offset = -86 
+EQ N114 L134 T191 ;  T191 = uck == 5 
+BF T191 skipif192 ;  BranchFalse T191 (bool) skipif192 
+BF I122 skipif193 ;  BranchFalse I122 (bool) skipif193 
+WRITE H140 char ;  cout << 'Z'(char) 
+JMP skipelse194 ;  Jump skipelse194 
+skipif193 WRITE H139 char ;  cout << 'A'(char) 
+skipelse194 PUSH T195 1 ;  bar.T195, offset = -90 
+MOV H140 L132 ;  chit(offset=-20) = 'Z' 
+JMP skipelse196 ;  Jump skipelse196 
+skipif192 PUSH T197 4 ;  bar.T197, offset = -91 
+DIV I121 L135 T197 ;  T197 = hit / ex 
+PUSH T198 4 ;  bar.T198, offset = -95 
+ADD N114 T197 T198 ;  T198 = T197 + 5 
+PUSH T199 4 ;  bar.T199, offset = -99 
+MOV T198 L130 ;  a(offset=-4) = T198 
+PUSH T200 1 ;  bar.T200, offset = -103 
+PUSH T201 1 ;  bar.T201, offset = -104 
+MOV T200 L132 ;  chit(offset=-20) = T200 
+PUSH T202 4 ;  bar.T202, offset = -105 
+LT N116 N114 T202 ;  T202 = 5 < 4 
+BF T202 skipif203 ;  BranchFalse T202 (bool) skipif203 
+WRITE H141 char ;  cout << 'Y'(char) 
+JMP skipelse196 ;  Jump skipelse204 backpatched to skipelse196 
+skipif203 READ L132 char ;  cin >> chit(char) 
+skipelse196 PUSH T205 4 ;  bar.T205, offset = -109 
+LT N116 N114 T205 ;  T205 = 5 < 4 
+BF T205 skipif206 ;  BranchFalse T205 (bool) skipif206 
+begin207 BF I122 skipif206 ;  BranchFalse I122 (bool) endwhile208 backpatched to skipif206 
+PUSH A209 1 ;  bar.A209, offset = -113 
+AEF I123 N125 A209 ;  goof + 1 * sizeof char (pointer) 
+WRITE A209 char ;  cout << A209(char) 
+JMP begin207 ;  Jump begin207 
+skipif206 RETURN L135 ; return int hit from function func 
+RTN ; return from function func 
+X149 FUNC X149 ;  Contructor for class rabuf 
+PUSH A211 1 ;  rabuf.A211, offset = 0 
+AEF I123 N150 A211 ;  goof + 10 * sizeof char (pointer) 
+PUSH T212 1 ;  rabuf.T212, offset = -1 
+MOV H117 A211 ;  A211(offset=0) = 'c' 
+PUSH T213 4 ;  rabuf.T213, offset = -2 
+RETURN T213 ; return rabuf T213 from function xtor 
+RTN ; return from function func 
+M151 FUNC M151 ; void kxi2016 main() 
+PUSH L152 4 ;  main.cho, offset = 0 
+PUSH T214 4 ;  main.T214, offset = -4 
+MOV N114 L152 ;  cho(offset=0) = 5 
+PUSH L153 4 ;  main.a, offset = -8 
+PUSH T215 4 ;  main.T215, offset = -12 
+MOV N154 L153 ;  a(offset=-8) = null 
+PUSH L155 1 ;  main.c, offset = -16 
+PUSH L156 4 ;  main.rab, offset = -17 
+PUSH L157 4 ;  main.buf, offset = -21 
+PUSH R216 4 ;  main.R216, offset = -25 
+NEWI 9 R216 ;  new instance of _bufar -> R216 
+FRAME S158 R216 ;  static initializer for class _bufar backpatched to S158 
+CALL S158  backpatched to S158 
+PEEK R216 
+FRAME X106 R216 ;  _bufar _bufar([]) 
+CALL X106 
+PEEK R216 ;  get return value 
+PUSH T217 4 ;  main.T217, offset = -29 
+MOV R216 L157 ;  buf(offset=-21) = R216 
+PUSH R218 4 ;  main.R218, offset = -33 
+REF L157 I107 R218 ;  R218 = buf.bubu offset = 5 
+PUSH R219 4 ;  main.R219, offset = -37 
+REF L156 I121 R219 ;  R219 = rab.ex offset = 20 
+PUSH T220 4 ;  main.T220, offset = -41 
+MOV R219 R218 ;  R218(offset=-33) = R219 
+WRITE H117 char ;  cout << 'c'(char) 
+READ L153 int ;  cin >> a(int) 
+WRITE L153 int ;  cout << a(int) 
+PUSH R221 4 ;  main.R221, offset = -45 
+FRAME M111 L157 ['L156'] ;  rabuf muck(['P110']) 
+PUSH L156 4 ;  rab, offset = -17 
+CALL M111 
+PEEK R221 ;  get return value 
+PUSH R222 4 ;  main.R222, offset = -49 
+REF R221 I121 R222 ;  R222 = R221.ex offset = 20 
+PUSH T223 4 ;  main.T223, offset = -53 
+MOV R222 L152 ;  cho(offset=0) = R222 
+PUSH R224 4 ;  main.R224, offset = -57 
+FRAME M124 L156 ;  int blah([]) 
+CALL M124 
+PEEK R224 ;  get return value 
+PUSH T225 4 ;  main.T225, offset = -61 
+MOV R224 L152 ;  cho(offset=0) = R224 
+PUSH R226 4 ;  main.R226, offset = -65 
+FRAME M111 L157 ['L156'] ;  rabuf muck(['P110']) 
+PUSH L156 4 ;  rab, offset = -17 
+CALL M111 
+PEEK R226 ;  get return value 
+PUSH R227 4 ;  main.R227, offset = -69 
+REF R226 I121 R227 ;  R227 = R226.ex offset = 20 
+PUSH T228 4 ;  main.T228, offset = -73 
+MOV L152 R227 ;  R227(offset=-69) = cho 
+PUSH T229 4 ;  main.T229, offset = -77 
+MOV T228 L153 ;  a(offset=-8) = T228 
+PUSH R230 4 ;  main.R230, offset = -81 
+REF L157 I107 R230 ;  R230 = buf.bubu offset = 5 
+PUSH T231 4 ;  main.T231, offset = -85 
+ADD R230 L152 T231 ;  T231 = cho + R230 
+PUSH R232 4 ;  main.R232, offset = -89 
+REF L156 I121 R232 ;  R232 = rab.ex offset = 20 
+PUSH T233 4 ;  main.T233, offset = -93 
+ADD L152 R232 T233 ;  T233 = R232 + cho 
+PUSH R234 4 ;  main.R234, offset = -97 
+FRAME M128 L156 ['T231', 'T233'] ;  int bar(['P126', 'P127']) 
+PUSH T231 4 ;  T231, offset = -85 
+PUSH T233 4 ;  T233, offset = -93 
+CALL M128 
+PEEK R234 ;  get return value 
+PUSH T235 4 ;  main.T235, offset = -101 
+MOV R234 L153 ;  a(offset=-8) = R234 
+PUSH R236 4 ;  main.R236, offset = -105 
+REF L156 I146 R236 ;  R236 = rab.goo offset = 8 
+PUSH T237 4 ;  main.T237, offset = -109 
+DIV N116 N114 T237 ;  T237 = 5 / 4 
+PUSH T238 4 ;  main.T238, offset = -113 
+SUB N125 T237 T238 ;  T238 = T237 - 1 
+PUSH T239 4 ;  main.T239, offset = -117 
+ADD T238 L152 T239 ;  T239 = cho + T238 
+PUSH A240 4 ;  main.A240, offset = -121 
+PUSH S241 4 ;  main.S241, offset = -125 
+MUL T239 4 S241 ;  T239 * 4 -> S241 
+NEW S241 A240 ;  new array of intof size S241 
+PUSH T242 4 ;  main.T242, offset = -129 
+MOV A240 R236 ;  R236(offset=-105) = A240 
+PUSH R243 4 ;  main.R243, offset = -133 
+REF L156 I146 R243 ;  R243 = rab.goo offset = 8 
+PUSH A244 4 ;  main.A244, offset = -137 
+AEF R243 N114 A244 ;  goo + 5 * sizeof int (pointer) 
+PUSH T245 4 ;  main.T245, offset = -141 
+MOV N115 A244 ;  A244(offset=-137) = 3 
+PUSH R246 4 ;  main.R246, offset = -145 
+NEWI 32 R246 ;  new instance of rabuf -> R246 
+FRAME S173 R246 ;  static initializer for class rabuf backpatched to S173 
+CALL S173  backpatched to S173 
+PEEK R246 
+FRAME X149 R246 ['N125', 'N131'] ;  rabuf rabuf(['P147', 'P148']) 
+PUSH N125 ;  1, offset = 0 
+PUSH N131 ;  2, offset = 0 
+CALL X149 
+PEEK R246 ;  get return value 
+PUSH T247 4 ;  main.T247, offset = -149 
+MOV R246 L156 ;  rab(offset=-17) = R246 
+PUSH R248 4 ;  main.R248, offset = -153 
+REF L156 I144 R248 ;  R248 = rab.ra offset = 12 
+PUSH A249 4 ;  main.A249, offset = -157 
+PUSH S250 4 ;  main.S250, offset = -161 
+MUL N114 4 S250 ;  5 * 4 -> S250 
+NEW S250 A249 ;  new array of rabufof size S250 
+PUSH T251 4 ;  main.T251, offset = -165 
+MOV A249 R248 ;  R248(offset=-153) = A249 
+PUSH R252 4 ;  main.R252, offset = -169 
+REF L156 I144 R252 ;  R252 = rab.ra offset = 12 
+PUSH A253 4 ;  main.A253, offset = -173 
+AEF R252 N131 A253 ;  ra + 2 * sizeof rabuf (pointer) 
+PUSH R254 4 ;  main.R254, offset = -177 
+NEWI 32 R254 ;  new instance of rabuf -> R254 
+FRAME S173 R254 ;  static initializer for class rabuf backpatched to S173 
+CALL S173  backpatched to S173 
+PEEK R254 
+FRAME X149 R254 ['N125', 'N131'] ;  rabuf rabuf(['P147', 'P148']) 
+PUSH N125 ;  1, offset = 0 
+PUSH N131 ;  2, offset = 0 
+CALL X149 
+PEEK R254 ;  get return value 
+PUSH T255 4 ;  main.T255, offset = -181 
+MOV R254 A253 ;  A253(offset=-173) = R254 
+PUSH T256 4 ;  main.T256, offset = -185 
+ADD N114 N114 T256 ;  T256 = 5 + 5 
+WRITE T256 int ;  cout << T256(int) 
+RTN ; return from function main 
+S173 FUNC S173 ;  static initializer for classrabuf 
+PUSH T210 4 ;  S173.T210, offset = 0 
+MOV I145 I146 ;  goo(offset=8) = foo 
+RTN ; return from static initializer for rabuf 
+S158 FUNC S158 ;  static initializer for class_bufar 
+RTN ; return from static initializer for _bufar 
+H141 .BYT 'Y' 
+H140 .BYT 'Z' 
+H139 .BYT 'A' 
+N114 .INT 5 
+N115 .INT 3 
+N116 .INT 4 
+H117 .BYT 'c' 
+N131 .INT 2 
+N125 .INT 1 
+N150 .INT 10 
+N154 .INT null 
+N105 .INT 89 

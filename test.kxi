@@ -9,7 +9,7 @@ class word{
 }
 
 class io{
-  public char[] input() {
+  public char[] read() {
     int i = 0;
     char word[] = new char[21];
     while (i < 20) {
@@ -19,8 +19,9 @@ class io{
     word[i] = '\0';
     return word;
   }
-  public int output(char w[]) {
+  public int write(char w[]) {
     int i = 0;
+    return write(read());
     while (w[i] != '\0') {
       cout << w[i];
       i = i + 1;
@@ -29,12 +30,10 @@ class io{
   }
 } 
 void kxi2016 main () {
-  cout << 5 + 5;
+  io writer;
+  int count = writer.write(writer.read());
+  cout << count + 5;
+
 }
-//nil this is {and} for '323' testi23ng '\t' '3' purposes
-//@ 1 *  # -2 +342 - 98274
-//"whileif"( 123 = 3) no; // lets add a comment out here.
-//bumer [or]       thats != cool 's'
-//nd <= but not >= <?xml version="1.0" ?>
 
 

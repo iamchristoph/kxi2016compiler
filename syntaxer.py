@@ -826,7 +826,7 @@ class syntaxer :
     else :
       self.generror('compilation_unit', 'main_declaration', 'keyword', 'kxi2016')
     if self.token().lexeme == 'main' :
-      main = self.symtab.insert(self.token(), 'main', symtable.data(None, returntype='void', param=[], accessmod='public'))
+      main = self.symtab.insert(self.token(), 'main', symtable.data('main', returntype='void', param=[], accessmod='public'))
       if self.semcheck :
         semantic.Icode.append([main, 'FUNC', main, None, None, '; void kxi2016 main()'])
         semantic.backpatch('main', main)
@@ -848,7 +848,8 @@ class syntaxer :
     self.symtab.scoper()
     if self.token().type != 'EOF' :
       self.generror('compilation_unit', '', 'EOF', '')
-    semantic.addscons()
+    if self.semcheck:
+      semantic.addscons()
 
   def run(self) :
     self.compilationunit()
@@ -865,7 +866,17 @@ class syntaxer :
     semantic.syntaxer = self
     self.compilationunit()
 
+    
     semantic.Iprint()
+    scopes = set('g')
+    for sym in self.symtab.table.iteritems() :
+      scopes.add(sym[1].scope)
+    for scope in scopes :
+      s = scope.split('.')
+      print '-----------------------------------------------------------'
+      print self.symtab.idsymfromlexscope(s[-1], '.'.join(s[0:-1]))
+      print scope + '\n', self.symtab.symfromscope(scope)
+    print '-----------------------------------------------------------'
     #for n in self.classnames :
     #  print self.symtab.idsymfromlexscope(n, 'g')
     #  print n + '\n', self.symtab.symfromscope('g.'+ n)
@@ -882,18 +893,28 @@ class syntaxer :
           sym.data.offset = classid[1].data.size
           classid[1].data.size +=sym.data.size
 
+
 if __name__ == '__main__' :
   import sys
   if len(sys.argv) > 1 :
     fname = sys.argv[1]
   else :
     fname = 'test.kxi'
-
+  out = 'out' + fname[:-4]  + '.txt'
   #analyzer = lexer.lexer(fname)#
   #token = analyzer.tokengenerator
   #getToken = analyzer.getToken
   syntax = syntaxer(fname, False, DEBUG)
   syntax.run()
+  op = file(out, 'w')
+  for i in semantic.Icode :
+    s = ''
+    for n in i :
+      if n :
+        s += str(n) + ' '
+    s += '\n'
+    op.write(s)
+  op.close()
   #while token.next() :
   #  getToken(debug)
   #analyzer.getToken(debug)

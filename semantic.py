@@ -38,10 +38,14 @@ Icode = [['Start', 'FRAME', 'main', 0, None, ';  Frame main'], \
 def addscons() :
   for staticinit in statcons.iteritems() :
     sym = symtab.get(staticinit[0])
-    print sym, sym.symid
     backpatch(sym.data.type[2:], sym.symid)
     for instruction in staticinit[1] :
       Icode.append(instruction)
+  for sym in symtab.table.iteritems() :
+    if sym[0][0] == 'N' :
+      Icode.append([sym[0], '.INT', sym[1].value, None, None, None])
+    if sym[0][0] == 'H' :
+      Icode.append([sym[0], '.BYT', sym[1].value, None, None, None])
 
 def Iprint() :
   for quad in Icode :
@@ -245,6 +249,8 @@ class SAR :
       self.value = data.value
     self.data = data
     #self.symid
+  def __repr__(self) :
+    return 'SAR <type: ' + self.SAStype + ', value: ' + self.value + ', data: ' + str(self.data)
 
 def pushtemp(typ, rtyp, kind='temp', par=None) :
   temp = symtab.insert(None, kind, override=True, data=symtable.data(typ=typ, returntype=rtyp, param=par, accessmod='private'))
@@ -314,8 +320,9 @@ def iexist(stable=None) :
     res = pushtemp(symbol.data.type, symbol.data.returntype, 'f'+ symbol.kind, i.data[1])
     rsym = symtab.get(res[1])
     Icode.append([LBL.pop(), 'FRAME', symbol.symid, 'this', None, ';  ' + symbol.value + '(' + str(symbol.data.param) + ')']) 
-    for p in symbol.data.param :
-      sym = symtab.get(p)
+    print rsym, rsym.data.param
+    for p in rsym.data.param.data :
+      sym = symtab.get(p.symid)
       Icode.append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + sym.value + ', offset = ' + str(sym.data.offset)]) 
     Icode.append([LBL.pop(), 'CALL', symbol.symid, None, None, None])
     if symbol.data.returntype and symbol.data.returntype != 'void' :
