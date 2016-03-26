@@ -4,6 +4,6 @@ void kxi2016 main() {
   cout << 'r';
   cout << 'i';
   cout << 's';
-  cout << '_';
+  cout << ' ';
   cout << 10;
 }

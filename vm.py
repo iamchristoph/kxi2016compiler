@@ -84,10 +84,12 @@ class Assembler :
       value = asm[i]
       if label == '.BYT' :
         value = asm[i].strip('\'')
+        if value == '' :
+          value = ' '
         if value.isdigit() :
-
           return pack('c', chr(int(value)))
-        else : return pack('c', value)
+        else : 
+          return pack('c', value)
       else :
         return pack('i', int(value))
     elif label == ';' : # is comment

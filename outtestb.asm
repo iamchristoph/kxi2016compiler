@@ -27,14 +27,14 @@ TRP 3 ;  cout << 'i'(char)
 LDB R3 H106 
 TRP 3 ;  cout << 's'(char) 
 LDB R3 H107 
-TRP 3 ;  cout << '_'(char) 
+TRP 3 ;  cout << ' '(char) 
 LDR R3 N108 
 TRP 1 ;  cout << 10(int) 
 LDR R0 FP 
 JMR R0 
 H105 .BYT 'i' 
 H104 .BYT 'r' 
-H107 .BYT '_' 
+H107 .BYT ' ' 
 H106 .BYT 's' 
 H103 .BYT 'h' 
 H102 .BYT 'C' 
