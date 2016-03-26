@@ -1,0 +1,20 @@
+Start FRAME M101 this ;  Frame main backpatched to M101 
+CALL M101  backpatched to M101 
+End STOP 
+M101 FUNC M101 ; void kxi2016 main() 
+WRITE H102 char ;  cout << 'C'(char) 
+WRITE H103 char ;  cout << 'h'(char) 
+WRITE H104 char ;  cout << 'r'(char) 
+WRITE H105 char ;  cout << 'i'(char) 
+WRITE H106 char ;  cout << 's'(char) 
+WRITE H107 char ;  cout << '_'(char) 
+WRITE N108 int ;  cout << 10(int) 
+RTN ; return from function main 
+H105 .BYT 'i' 
+H104 .BYT 'r' 
+H107 .BYT '_' 
+H106 .BYT 's' 
+H103 .BYT 'h' 
+H102 .BYT 'C' 
+N108 .INT 10 
+this .INT 0 

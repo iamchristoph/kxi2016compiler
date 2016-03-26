@@ -1,4 +1,7 @@
-Start FRAME M151 ;  Frame main backpatched to M151 
+Start MOV R1 SP Frame;  Frame main backpatched to M151 
+ADI R1 -189 
+CMP R1 SL 
+BLT R1 End 
 CALL M151  backpatched to M151 
 End STOP 
 M104 FUNC M104 ;  int blob(['P102', 'P103']) 
@@ -35,7 +38,10 @@ MOV T177 L134 ;  uck(offset=-25) = T177
 MOV T179 L136 ;  cu(offset=-41) = T179 
 MOV H139 L138 ;  A(offset=-48) = 'A' 
 REF T182 I122 I183 ;  I183 = T182.sucking offset = 24 
-FRAME M124 this ;  blah([]) 
+MOV R1 SP Frame;  blah([]) 
+ADI R1 
+CMP R1 SL 
+BLT R1 End 
 CALL M124 
 PEEK L184 ;  get return value 
 REF T185 I121 I186 ;  I186 = T185.ex offset = 20 
@@ -77,10 +83,16 @@ M151 FUNC M151 ; void kxi2016 main()
 MOV N114 L152 ;  cho(offset=0) = 5 
 MOV N154 L153 ;  a(offset=-8) = null 
 NEWI 9 L216 ;  new instance of _bufar -> L216 
-FRAME S158 L216 ;  static initializer for class _bufar backpatched to S158 
+MOV R1 SP Frame;  static initializer for class _bufar backpatched to S158 
+ADI R1 
+CMP R1 SL 
+BLT R1 End 
 CALL S158  backpatched to S158 
 PEEK L216 
-FRAME X106 L216 ;  _bufar _bufar([]) 
+MOV R1 SP Frame;  _bufar _bufar([]) 
+ADI R1 
+CMP R1 SL 
+BLT R1 End 
 CALL X106 
 PEEK L216 ;  get return value 
 MOV L216 L157 ;  buf(offset=-21) = L216 
@@ -90,18 +102,37 @@ MOV I219 I218 ;  I218(offset=-33) = I219
 WRITE H117 char ;  cout << 'c'(char) 
 READ L153 int ;  cin >> a(int) 
 WRITE L153 int ;  cout << a(int) 
-FRAME M111 L157 ['L156'] ;  rabuf muck(['P110']) 
-PUSH L156 4 ;  rab, offset = -17 
+MOV R1 SP Frame;  rabuf muck(['P110']) 
+ADI R1 -62 
+CMP R1 SL 
+BLT R1 End 
+MOV R0 SP 
+MOV R2 FP 
+ADI R2 -29 
+LDR R1 R2 
+STR R1 R0 
+ADI SP 4 
 CALL M111 
 PEEK L221 ;  get return value 
 REF L221 I121 I222 ;  I222 = L221.ex offset = 20 
 MOV I222 L152 ;  cho(offset=0) = I222 
-FRAME M124 L156 ;  int blah([]) 
+MOV R1 SP Frame;  int blah([]) 
+ADI R1 
+CMP R1 SL 
+BLT R1 End 
 CALL M124 
 PEEK L224 ;  get return value 
 MOV L224 L152 ;  cho(offset=0) = L224 
-FRAME M111 L157 ['L156'] ;  rabuf muck(['P110']) 
-PUSH L156 4 ;  rab, offset = -17 
+MOV R1 SP Frame;  rabuf muck(['P110']) 
+ADI R1 -62 
+CMP R1 SL 
+BLT R1 End 
+MOV R0 SP 
+MOV R2 FP 
+ADI R2 -29 
+LDR R1 R2 
+STR R1 R0 
+ADI SP 4 
 CALL M111 
 PEEK L226 ;  get return value 
 REF L226 I121 I227 ;  I227 = L226.ex offset = 20 
@@ -111,9 +142,22 @@ REF L157 I107 I230 ;  I230 = buf.bubu offset = 5
 ADD I230 L152 T231 ;  T231 = cho + I230 
 REF L156 I121 I232 ;  I232 = rab.ex offset = 20 
 ADD L152 I232 T233 ;  T233 = I232 + cho 
-FRAME M128 L156 ['T231', 'T233'] ;  int bar(['P126', 'P127']) 
-PUSH T231 4 ;  T231, offset = -85 
-PUSH T233 4 ;  T233, offset = -93 
+MOV R1 SP Frame;  int bar(['P126', 'P127']) 
+ADI R1 -122 
+CMP R1 SL 
+BLT R1 End 
+MOV R0 SP 
+MOV R2 FP 
+ADI R2 -97 
+LDR R1 R2 
+STR R1 R0 
+ADI SP 4 
+MOV R0 SP 
+MOV R2 FP 
+ADI R2 -105 
+LDR R1 R2 
+STR R1 R0 
+ADI SP 4 
 CALL M128 
 PEEK L234 ;  get return value 
 MOV L234 L153 ;  a(offset=-8) = L234 
@@ -128,12 +172,28 @@ REF L156 I146 I243 ;  I243 = rab.goo offset = 8
 AEF I243 N114 A244 ;  goo + 5 * sizeof int (pointer) 
 MOV N115 A244 ;  A244(offset=-137) = 3 
 NEWI 32 L246 ;  new instance of rabuf -> L246 
-FRAME S173 L246 ;  static initializer for class rabuf backpatched to S173 
+MOV R1 SP Frame;  static initializer for class rabuf backpatched to S173 
+ADI R1 -4 
+CMP R1 SL 
+BLT R1 End 
 CALL S173  backpatched to S173 
 PEEK L246 
-FRAME X149 L246 ['N125', 'N131'] ;  rabuf rabuf(['P147', 'P148']) 
-PUSH N125 4 ;  1, offset = 0 
-PUSH N131 4 ;  2, offset = 0 
+MOV R1 SP Frame;  rabuf rabuf(['P147', 'P148']) 
+ADI R1 -14 
+CMP R1 SL 
+BLT R1 End 
+MOV R0 SP 
+MOV R2 FP 
+ADI R2 -12 
+LDR R1 R2 
+STR R1 R0 
+ADI SP 4 
+MOV R0 SP 
+MOV R2 FP 
+ADI R2 -12 
+LDR R1 R2 
+STR R1 R0 
+ADI SP 4 
 CALL X149 
 PEEK L246 ;  get return value 
 MOV L246 L156 ;  rab(offset=-17) = L246 
@@ -144,12 +204,28 @@ MOV A249 I248 ;  I248(offset=-153) = A249
 REF L156 I144 I252 ;  I252 = rab.ra offset = 12 
 AEF I252 N131 A253 ;  ra + 2 * sizeof rabuf (pointer) 
 NEWI 32 L254 ;  new instance of rabuf -> L254 
-FRAME S173 L254 ;  static initializer for class rabuf backpatched to S173 
+MOV R1 SP Frame;  static initializer for class rabuf backpatched to S173 
+ADI R1 -4 
+CMP R1 SL 
+BLT R1 End 
 CALL S173  backpatched to S173 
 PEEK L254 
-FRAME X149 L254 ['N125', 'N131'] ;  rabuf rabuf(['P147', 'P148']) 
-PUSH N125 4 ;  1, offset = 0 
-PUSH N131 4 ;  2, offset = 0 
+MOV R1 SP Frame;  rabuf rabuf(['P147', 'P148']) 
+ADI R1 -14 
+CMP R1 SL 
+BLT R1 End 
+MOV R0 SP 
+MOV R2 FP 
+ADI R2 -12 
+LDR R1 R2 
+STR R1 R0 
+ADI SP 4 
+MOV R0 SP 
+MOV R2 FP 
+ADI R2 -12 
+LDR R1 R2 
+STR R1 R0 
+ADI SP 4 
 CALL X149 
 PEEK L254 ;  get return value 
 MOV L254 A253 ;  A253(offset=-173) = L254 

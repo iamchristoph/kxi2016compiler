@@ -1,97 +1,66 @@
-Start FRAME M119 ;  Frame main backpatched to M119 
-CALL M119  backpatched to M119 
+Start FRAME M120 this ;  Frame main backpatched to M120 
+CALL M120  backpatched to M120 
 End STOP 
-X106 FUNC X106 ;  Contructor for class word 
-PUSH T124 4 ;  word.T124, offset = 0 
-PUSH R125 4 ;  word.R125, offset = -4 
-REF T124 I102 R125 ;  R125 = T124.w offset = 0 
-PUSH T126 4 ;  word.T126, offset = -8 
-MOV P104 R125 ;  R125(offset=-4) = w 
-PUSH T127 4 ;  word.T127, offset = -12 
-MOV P105 I103 ;  size(offset=4) = s 
-RTN ; return from function xtor 
-M108 FUNC M108 ;  @:char read([]) 
-PUSH L109 4 ;  read.i, offset = 0 
-PUSH T129 4 ;  read.T129, offset = -4 
-MOV N110 L109 ;  i(offset=0) = 0 
-PUSH L111 4 ;  read.word, offset = -8 
-PUSH A130 4 ;  read.A130, offset = -12 
-PUSH S131 4 ;  read.S131, offset = -16 
-MUL N112 1 S131 ;  21 * 1 -> S131 
+X107 FUNC X107 ;  Contructor for class word 
+REF T124 I102 R125 ;  R125 = T124.w offset = 1 
+MOV P105 R125 ;  R125(offset=-12) = w 
+MOV P106 I103 ;  size(offset=5) = s 
+RETURN this ; return from function xtor 
+M109 FUNC M109 ;  @:char read([]) 
+MOV N111 L110 ;  i(offset=0) = 0 
+MUL N113 1 S131 ;  21 * 1 -> S131 
 NEW S131 A130 ;  new array of charof size S131 
-PUSH T132 4 ;  read.T132, offset = -20 
-MOV A130 L111 ;  word(offset=-8) = A130 
-begin133 PUSH T134 4 ;  read.T134, offset = -24 
-LT N113 L109 T134 ;  T134 = i < 20 
+MOV A130 L112 ;  word(offset=-8) = A130 
+begin133 LT N114 L110 T134 ;  T134 = i < 20 
 BF T134 endwhile135 ;  BranchFalse T134 (bool) endwhile135 
-PUSH A136 1 ;  read.A136, offset = -28 
-AEF L111 L109 A136 ;  word + i * sizeof char (pointer) 
+AEF L112 L110 A136 ;  word + i * sizeof char (pointer) 
 READ A136 char ;  cin >> A136(char) 
-PUSH T137 4 ;  read.T137, offset = -29 
-ADD N114 L109 T137 ;  T137 = i + 1 
-PUSH T138 4 ;  read.T138, offset = -33 
-MOV T137 L109 ;  i(offset=0) = T137 
+ADD N115 L110 T137 ;  T137 = i + 1 
+MOV T137 L110 ;  i(offset=0) = T137 
 JMP begin133 ;  Jump begin133 
-endwhile135 PUSH A139 1 ;  read.A139, offset = -37 
-AEF L111 L109 A139 ;  word + i * sizeof char (pointer) 
-PUSH T140 1 ;  read.T140, offset = -38 
-MOV H115 A139 ;  A139(offset=-37) = '\0' 
-RETURN L111 ; return @:char word from function func 
+endwhile135 AEF L112 L110 A139 ;  word + i * sizeof char (pointer) 
+MOV H116 A139 ;  A139(offset=-37) = '\0' 
+RETURN L112 ; return @:char word from function func 
 RTN ; return from function func 
-M117 FUNC M117 ;  int write(['P116']) 
-PUSH L118 4 ;  write.i, offset = 0 
-PUSH T141 4 ;  write.T141, offset = -4 
-MOV N110 L118 ;  i(offset=0) = 0 
-PUSH F142 4 ;  write.F142, offset = -8 
-FRAME M108 this ;  read([]) 
-CALL M108 
-PEEK F142 ;  get return value 
-PUSH F143 4 ;  write.F143, offset = -12 
-FRAME M117 this ;  write(['P116']) 
-PUSH F142 4 ;  F142, offset = -8 
-CALL M117 
-PEEK F143 ;  get return value 
-RETURN F143 ; return int F143 from function func 
-begin144 PUSH A145 1 ;  write.A145, offset = -16 
-AEF P116 L118 A145 ;  w + i * sizeof char (pointer) 
-PUSH T146 4 ;  write.T146, offset = -17 
-NE H115 A145 T146 ;  T146 = A145 != '\0' 
+M118 FUNC M118 ;  int write(['P117']) 
+MOV N111 L119 ;  i(offset=-4) = 0 
+FRAME M109 this ;  read([]) 
+CALL M109 
+PEEK L142 ;  get return value 
+FRAME M118 this ;  write(['P117']) 
+PUSH L142 4 ;  L142, offset = -12 
+CALL M118 
+PEEK L143 ;  get return value 
+RETURN L143 ; return int L143 from function func 
+begin144 AEF P117 L119 A145 ;  w + i * sizeof char (pointer) 
+NE H116 A145 T146 ;  T146 = A145 != '\0' 
 BF T146 endwhile147 ;  BranchFalse T146 (bool) endwhile147 
-PUSH A148 1 ;  write.A148, offset = -21 
-AEF P116 L118 A148 ;  w + i * sizeof char (pointer) 
+AEF P117 L119 A148 ;  w + i * sizeof char (pointer) 
 WRITE A148 char ;  cout << A148(char) 
-PUSH T149 4 ;  write.T149, offset = -22 
-ADD N114 L118 T149 ;  T149 = i + 1 
-PUSH T150 4 ;  write.T150, offset = -26 
-MOV T149 L118 ;  i(offset=0) = T149 
+ADD N115 L119 T149 ;  T149 = i + 1 
+MOV T149 L119 ;  i(offset=-4) = T149 
 JMP begin144 ;  Jump begin144 
-endwhile147 RETURN L118 ; return int i from function func 
+endwhile147 RETURN L119 ; return int i from function func 
 RTN ; return from function func 
-M119 FUNC M119 ; void kxi2016 main() 
-PUSH L120 4 ;  main.writer, offset = 0 
-PUSH L121 4 ;  main.count, offset = -4 
-PUSH R151 4 ;  main.R151, offset = -8 
-FRAME M108 L120 ;  @:char read([]) 
-CALL M108 
-PEEK R151 ;  get return value 
-PUSH R152 4 ;  main.R152, offset = -12 
-FRAME M117 L120 ['R151'] ;  int write(['P116']) 
-PUSH R151 4 ;  R151, offset = -8 
-CALL M117 
-PEEK R152 ;  get return value 
-PUSH T153 4 ;  main.T153, offset = -16 
-MOV R152 L121 ;  count(offset=-4) = R152 
-PUSH T154 4 ;  main.T154, offset = -20 
-ADD N122 L121 T154 ;  T154 = count + 5 
-WRITE T154 int ;  cout << T154(int) 
+M120 FUNC M120 ; void kxi2016 main() 
+FRAME M109 L121 ;  @:char read([]) 
+CALL M109 
+PEEK L151 ;  get return value 
+FRAME M118 L121 ['L151'] ;  int write(['P117']) 
+PUSH L151 4 ;  L151, offset = -4 
+CALL M118 
+PEEK L152 ;  get return value 
+WRITE L152 int ;  cout << L152(int) 
+WRITE H122 char ;  cout << 'c'(char) 
 RTN ; return from function main 
 S123 FUNC S123 ;  static initializer for classword 
 RTN ; return from static initializer for word 
 S128 FUNC S128 ;  static initializer for classio 
 RTN ; return from static initializer for io 
-N112 .INT 21 
-N114 .INT 1 
-N110 .INT 0 
-N113 .INT 20 
-N122 .INT 5 
-H115 .BYT '\0' 
+N113 .INT 21 
+N114 .INT 20 
+N115 .INT 1 
+N111 .INT 0 
+H122 .BYT 'c' 
+H116 .BYT '\0' 
+this .INT 0 

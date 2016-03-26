@@ -2,6 +2,7 @@
 import lexer
 from collections import namedtuple
 import semantic
+import tcode
 
 DEBUG = False
 
@@ -25,13 +26,18 @@ class symtable :
       self.accessmod = accessmod
       self.size = size
       self.offset = offset
+      self.psize = 0
     def __repr__(self) :
+      if self.psize :
+        p = ' psize: ' + str(self.psize)
+      else :
+        p = ''
       return 'type: ' + self.type + ' r-type: ' + self.returntype + ' param: [' + self.param.__repr__() + ']\n\taccess: '\
-       + self.accessmod.__repr__() + ' size: ' + str(self.size) + ' offset: ' + str(self.offset)
+       + self.accessmod.__repr__() + ' size: ' + str(self.size) + ' offset: ' + str(self.offset) + p
   #data = namedtuple('data', ['type', 'returntype', 'param', 'accessmod', 'size', 'offset'])
   def __init__(self, d=False) :
     self.debug = d
-    self.table = {}
+    self.table = {'this': symtable.symbol('g', 'this', 'void', 'this', symtable.data('void', 'void', [], None))}
     self.isfull = False
     self.scope = 'g'
     self.currentid = 100
@@ -80,7 +86,14 @@ class symtable :
         dup = self.idsymfromlex(t.lexeme)
         if dup :
           return dup[0]
-      _id = self.getid(kind)
+      if kind == 'return' :
+        dup = self.idsymfromlexscope(t, self.scope)
+        if dup :
+          return dup[0]
+        else :
+          _id = self.getid('lvar')
+      else :
+        _id = self.getid(kind)
       if override :
         val = _id
       else :
@@ -335,17 +348,17 @@ class syntaxer :
       else :
         self.generror('expression', '', 'symbol', ')')
     elif t.lexeme == 'true' :
-      sid = self.symtab.insert(t, 'blit', symtable.data(typ='bool', returntype='bool', param=None, accessmod='public'), scope='g')
+      sid = self.symtab.insert(t, 'blit', symtable.data(typ='bool', returntype='bool', param=None, accessmod='public', size=4), scope='g')
       if self.semcheck :
         semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
     elif t.lexeme == 'false' :
-      sid = self.symtab.insert(t, 'blit', symtable.data(typ='bool', returntype='bool', param=None, accessmod='public'), scope='g')
+      sid = self.symtab.insert(t, 'blit', symtable.data(typ='bool', returntype='bool', param=None, accessmod='public', size=4), scope='g')
       if self.semcheck :
         semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
     elif t.lexeme == 'null' :
-      sid = self.symtab.insert(t, 'null', symtable.data(typ='null', returntype='null', param=None, accessmod='public'), scope='g')
+      sid = self.symtab.insert(t, 'null', symtable.data(typ='null', returntype='null', param=None, accessmod='public', size=4), scope='g')
       if self.semcheck :
         semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
@@ -357,12 +370,12 @@ class syntaxer :
       if self.token().lexeme == '.' :
         self.memberrefz()
     elif t.type == 'number' :
-      sid = self.symtab.insert(t, 'ilit', symtable.data(typ='int', returntype='int', param=None, accessmod='public'), scope='g')
+      sid = self.symtab.insert(t, 'ilit', symtable.data(typ='int', returntype='int', param=None, accessmod='public', size=4), scope='g')
       if self.semcheck :
         semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
     elif t.type == 'character' :
-      sid = self.symtab.insert(t, 'clit', symtable.data(typ='char', returntype='char', param=None, accessmod='public'), scope='g')
+      sid = self.symtab.insert(t, 'clit', symtable.data(typ='char', returntype='char', param=None, accessmod='public', size=1), scope='g')
       if self.semcheck :
         semantic.lpush(self.symtab.get(sid))
       self.tkgen.next()
@@ -679,6 +692,8 @@ class syntaxer :
     if self.semcheck :
       semantic.rtnpush(t.lexeme, 'xtor')
       semantic.Icode.append([xid, 'FUNC', xid, None, None, ';  Contructor for class ' + t.lexeme])
+    else :
+      semantic.funcp(self.symtab.get(xid))
     self.symtab.scoper(t.lexeme)
     self.methodbody()
     self.symtab.scoper()
@@ -729,6 +744,8 @@ class syntaxer :
         symbol = self.symtab.get(methodid)
         if self.semcheck :
           semantic.Icode.append([symbol.symid, 'FUNC', symbol.symid, None, None, ';  ' + symbol.data.returntype + ' ' + symbol.value + '(' + str(symbol.data.param) + ')']) # ret func(param)  
+        else :
+          semantic.funcp(symbol)
         self.tkgen.next()
       else :
         self.generror('declaration', 'field_declaration', 'symbol', ')')
@@ -852,6 +869,7 @@ class syntaxer :
       semantic.addscons()
 
   def run(self) :
+    semantic.symtab = self.symtab
     self.compilationunit()
     if self.token().type == 'EOF' :
       del self.lexer 
@@ -862,12 +880,13 @@ class syntaxer :
     self.token = self.lexer.getToken
     self.tkgen = self.lexer.tokengenerator
     self.nexttoken = self.lexer.getNext
-    semantic.symtab = self.symtab
     semantic.syntaxer = self
     self.compilationunit()
 
     
     semantic.Iprint()
+    tcode.symtab = self.symtab
+    
     scopes = set('g')
     for sym in self.symtab.table.iteritems() :
       scopes.add(sym[1].scope)
@@ -880,6 +899,12 @@ class syntaxer :
     #for n in self.classnames :
     #  print self.symtab.idsymfromlexscope(n, 'g')
     #  print n + '\n', self.symtab.symfromscope('g.'+ n)
+
+    asm = []
+    for code in semantic.Icode :
+      for c in tcode.get(code) :
+        asm.append(c)
+    return asm
 
   def getoffsets(self) :
     for n in self.classnames :
@@ -901,11 +926,12 @@ if __name__ == '__main__' :
   else :
     fname = 'test.kxi'
   out = 'out' + fname[:-4]  + '.txt'
+  output = 'out' + fname[:-4]  + '.asm'
   #analyzer = lexer.lexer(fname)#
   #token = analyzer.tokengenerator
   #getToken = analyzer.getToken
   syntax = syntaxer(fname, False, DEBUG)
-  syntax.run()
+  asm = syntax.run()
   op = file(out, 'w')
   for i in semantic.Icode :
     s = ''
@@ -915,6 +941,16 @@ if __name__ == '__main__' :
     s += '\n'
     op.write(s)
   op.close()
+  ot = file(output, 'w')
+
+  for i in asm :
+    s = ''
+    for n in i :
+      if n :
+        s += str(n) + ' '
+    s += '\n'
+    ot.write(s)
+  ot.close()
   #while token.next() :
   #  getToken(debug)
   #analyzer.getToken(debug)

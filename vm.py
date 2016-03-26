@@ -171,10 +171,14 @@ class VirtualMachine :
       pc,  = unpack('i', this.Regs[PC])
       opcode, destination, source = unpack('iii', this.mem[pc:pc+step])
       this.Regs[PC] = pack('i', pc + step)
-      #print 'PC =', pc, '|', opcode, destination, source, "ThreadID =", threadID
-      #print 'R0 =', unpack('i', this.Regs[0])[0], 'R1 =', unpack('i', this.Regs[1])[0], 'R3 =', unpack('i', this.Regs[3])[0], 'R4 =', unpack('i', this.Regs[4])[0]
-      #print 'R5 =', unpack('i', this.Regs[5])[0], 'R6 =', unpack('i', this.Regs[6])[0], 'R7 =', unpack('i', this.Regs[7])[0], 'PC =', unpack('i', this.Regs[PC])[0]
-      #print 'SP =', unpack('i', this.Regs[SP])[0], 'FP =', unpack('i', this.Regs[FP])[0], 'SL =', unpack('i', this.Regs[SL])[0], 'SB =', unpack('i', this.Regs[SB])[0]
+      if debug :
+        for k in Opcodes :
+          if Opcodes[k] == opcode :
+            o = k
+        print '\nPC =', pc, '\n', o, destination, source, "ThreadID =", threadID
+        print '\nR0 =', unpack('i', this.Regs[0])[0], 'R1 =', unpack('i', this.Regs[1])[0],'R2 =', unpack('i', this.Regs[2])[0], 'R3 =', unpack('i', this.Regs[3])[0], 'R4 =', unpack('i', this.Regs[4])[0]
+        print 'R5 =', unpack('i', this.Regs[5])[0], 'R6 =', unpack('i', this.Regs[6])[0], 'R7 =', unpack('i', this.Regs[7])[0], 'PC =', unpack('i', this.Regs[PC])[0]
+        print 'SP =', unpack('i', this.Regs[SP])[0], 'FP =', unpack('i', this.Regs[FP])[0], 'SL =', unpack('i', this.Regs[SL])[0], 'SB =', unpack('i', this.Regs[SB])[0]
           
       #decode
       if opcode is 0 : #trap TRP
@@ -360,6 +364,10 @@ if len(sys.argv) > 1 :
   fname = sys.argv[1]
 else :
   fname = 'proj3.asm'
+if len(sys.argv) > 2 :
+  debug = True
+else:
+  debug = False
 code = open(fname)
 assembler = Assembler()
 mem = assembler.GetAssembly(fname)

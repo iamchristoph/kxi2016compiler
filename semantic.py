@@ -2,7 +2,7 @@ from syntaxer import symtable
 
 DEBUG = False
 ops = {'(': 0, ')': 0, '[': 0, ']': 0, '=': 1, 'or': 2, 'and': 2, '==': 3, '!=': 3, '<': 4, '<=': 4, '>': 4, '>=': 4, '+': 5, '-': 5, '*': 6, '/': 6}
-var = ('lvar', 'ivar', 'rlvar', 'rivar', 'alvar', 'aivar')
+var = ('lvar', 'ivar', 'rivar','temp', 'alvar', 'aivar')
 types = ('int', 'char', 'bool', 'void', 'sym')
 
 class stack :
@@ -31,7 +31,7 @@ LBL = stack()
 lblQ = []
 statcon = None
 statcons = {}
-Icode = [['Start', 'FRAME', 'main', 0, None, ';  Frame main'], \
+Icode = [['Start', 'FRAME', 'main', 'this', None, ';  Frame main'], \
           [None, 'CALL', 'main', None, None, ''], \
           ['End', 'STOP', None, None, None, '']]
 
@@ -44,8 +44,14 @@ def addscons() :
   for sym in symtab.table.iteritems() :
     if sym[0][0] == 'N' :
       Icode.append([sym[0], '.INT', sym[1].value, None, None, None])
-    if sym[0][0] == 'H' :
+    elif sym[0][0] == 'H' :
       Icode.append([sym[0], '.BYT', sym[1].value, None, None, None])
+    elif sym[0][0] == 'B' :
+      if sym[1].value == 'true' :
+        Icode.append([sym[0], '.INT', 1, None, None, None])
+      elif sym[1].value == 'false' :
+        Icode.append([sym[0], '.INT', 0, None, None, None])
+  Icode.append(['this', '.INT', '0', None, None, None])
 
 def Iprint() :
   for quad in Icode :
@@ -64,14 +70,16 @@ def opop() :
     if l.data.kind not in var :
       return False, 'Cannot assign to ' + l.data.kind
     elif l.data.data.type != r.data.data.returntype and r.data.data.returntype != 'null':
-      return False, 'Cannot assign ' + r.data.data.returntype + ' to ' + l.data.data.type
+      if l.data.data.type == 'ref' and l.data.data.returntype == r.data.data.returntype :
+        pass
+      else:
+        return False, 'Cannot assign ' + r.data.data.returntype + ' to ' + l.data.data.type
+    res =  pushtemp(l.data.data.returntype, l.data.data.returntype)
+    if statcon and len(symtab.scope.split('.')) == 2 :
+      statcons[statcon].append([LBL.pop(), 'MOV', r.data.symid, l.data.symid, None, ';  ' + l.value + '(offset=' + str(l.data.data.offset) + ') = ' + r.value]) # r -> l
     else :
-      res =  pushtemp(l.data.data.returntype, l.data.data.returntype)
-      if statcon and len(symtab.scope.split('.')) == 2 :
-        statcons[statcon].append([LBL.pop(), 'MOV', r.data.symid, l.data.symid, None, ';  ' + l.value + '(offset=' + str(l.data.data.offset) + ') = ' + r.value]) # r -> l
-      else :
-        Icode.append([LBL.pop(), 'MOV', r.data.symid, l.data.symid, None, ';  ' + l.value + '(offset=' + str(l.data.data.offset) + ') = ' + r.value]) # r -> l
-      return True,
+      Icode.append([LBL.pop(), 'MOV', r.data.symid, l.data.symid, None, ';  ' + l.value + '(offset=' + str(l.data.data.offset) + ') = ' + r.value]) # r -> l
+    return True,
   elif op == '+' :
     r = SAS.pop()
     l = SAS.pop()
@@ -252,8 +260,8 @@ class SAR :
   def __repr__(self) :
     return 'SAR <type: ' + self.SAStype + ', value: ' + self.value + ', data: ' + str(self.data)
 
-def pushtemp(typ, rtyp, kind='temp', par=None) :
-  temp = symtab.insert(None, kind, override=True, data=symtable.data(typ=typ, returntype=rtyp, param=par, accessmod='private'))
+def pushtemp(typ, rtyp, kind='temp', par=None, val=None) :
+  temp = symtab.insert(val, kind, override=True, data=symtable.data(typ=typ, returntype=rtyp, param=par, accessmod='private'))
   sym = symtab.get(temp)
   SAS.push(SAR('#TPUSH', sym))
   slist = sym.scope.split('.')
@@ -266,11 +274,11 @@ def pushtemp(typ, rtyp, kind='temp', par=None) :
     owner = symtab.get(statcon)
     sym.data.offset = -owner.data.size
     owner.data.size += sym.data.size
-    statcons[statcon].append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner.value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
+    #statcons[statcon].append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner.value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
   else :
-    sym.data.offset = -owner[1].data.size
+    sym.data.offset = -(owner[1].data.size + owner[1].data.psize)
     owner[1].data.size += sym.data.size
-    Icode.append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner[1].value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
+    #Icode.append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner[1].value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
   if DEBUG :
     print '#TPUSH', SAS.top().data.symid
   return True, temp
@@ -290,9 +298,9 @@ def vpush(var) :
       sym.data.size = 1
     else:
       sym.data.size = 4
-    sym.data.offset = -owner[1].data.size
+    sym.data.offset = -(owner[1].data.size + owner[1].data.psize)
     owner[1].data.size +=sym.data.size
-    Icode.append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner[1].value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
+    #Icode.append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner[1].value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
   if DEBUG :
     print '#VEXIST', SAS.top().data.symid
 
@@ -317,7 +325,7 @@ def iexist(stable=None) :
     success = matchfunc(i, symbol)
     if not success[0] :
       return success
-    res = pushtemp(symbol.data.type, symbol.data.returntype, 'f'+ symbol.kind, i.data[1])
+    res = pushtemp(symbol.data.type, symbol.data.returntype, 'return', i.data[1], symbol.value + 'rtn')
     rsym = symtab.get(res[1])
     Icode.append([LBL.pop(), 'FRAME', symbol.symid, 'this', None, ';  ' + symbol.value + '(' + str(symbol.data.param) + ')']) 
     print rsym, rsym.data.param
@@ -367,15 +375,18 @@ def rexist() :
     if symbol.data.accessmod == 'public' or objec.data.kind == 'this' :
       if objec.data.kind == 'this' :
         #print typ, rtyp, 'r'+ symbol.kind, 'this'
-        ref = pushtemp(typ, rtyp, 'r'+ symbol.kind, 'this')
+        ref = pushtemp('ref', rtyp, 'r'+symbol.kind, 'this')
       elif symbol.kind == 'xtor' :
-        ref = pushtemp(typ, rtyp, 'r'+ symbol.kind, member.data[1])
+        ref = pushtemp(typ, rtyp, 'return', member.data[1], symbol.value + 'rtn')
         Icode.append([LBL.pop(), 'NEWI', clas.data.size, ref[1], None, ';  new instance of ' + clas.value + ' -> ' + ref[1]])
+      elif symbol.kind == 'method' :
+        ref = pushtemp(typ, rtyp, 'return', member.data[1], symbol.value + 'rtn')
       else :
         #print typ, rtyp, 'r'+ symbol.kind, member.data[1]
-        ref = pushtemp(typ, rtyp, 'r'+ symbol.kind, member.data[1])
+        ref = pushtemp('ref', rtyp, 'r'+symbol.kind, member.data[1])
       if symbol.kind =='method' or symbol.kind == 'xtor' :
         rsym = symtab.get(ref[1])
+        rsym.kind = 'return'
         param =  [sym.symid for sym in rsym.data.param.data]
         if symbol.kind == 'method' :
           Icode.append([LBL.pop(), 'FRAME', symbol.symid, objec.data.symid, param, ';  ' + symbol.data.returntype  + ' ' + symbol.value + '(' + str(symbol.data.param) + ')']) 
@@ -539,6 +550,17 @@ def matchfunc(funcsar, symbol) :
       return False, 'The function ' + symbol.value + ' should take a ' + symtab.get(symbol.data.param[i]).data.type + ' got ' + funcsar.data[1].data[i].data.returntype
   return True,  symbol  
 
+def funcp(symbol) :
+  for i in range(len(symbol.data.param)) :
+    p = symbol.data.param[i]
+    psym = symtab.get(p)
+    if psym.data.type == 'char' :
+      psym.data.size = 1
+    else:
+      psym.data.size = 4
+    psym.data.offset = -symbol.data.psize
+    symbol.data.psize += psym.data.size
+
 def cdec(t) :
   scope = symtab.scope
   slist = scope.split('.')
@@ -590,7 +612,10 @@ def rtn(default=False) :
   rval = RTN.pop()
   #print val, rval
   if default :
-    if rval[0] == 'xtor' or rval[1][0] == 'void' or rval[1][1] :
+    if rval[0] == 'xtor' :
+      Icode.append([LBL.pop(), 'RETURN', 'this', None, None, '; return from function ' + rval[0]])
+      return True,
+    elif rval[1][0] == 'void' or rval[1][1] :
       Icode.append([LBL.pop(), 'RTN', None, None, None, '; return from function ' + rval[0]])
       return True,
     else :

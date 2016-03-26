@@ -13,7 +13,7 @@ class lexer :
   modifiers = ('public', 'private')
   whitespace = re.compile(r'[\s]')
   numbers = re.compile(r'[+-]*\d+')
-  characters = re.compile(r'\'[\w\d]\'|\'\\[nabrtfvx0]\'')
+  characters = re.compile(r'\'[\w\d]\'|\'\\[nabrtfvx0]\'|\'\s\'')
   identifiers = re.compile(r'[\w]+[\w\d]*')
   punctuation = re.compile(r'[.,;:?!\'"]')
   symbols = re.compile(r'!=|==|>=|<=|<<|>>|[][\](){}+-/*<>=]')

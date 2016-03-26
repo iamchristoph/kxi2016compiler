@@ -1,0 +1,9 @@
+void kxi2016 main() {
+  cout << 'C';
+  cout << 'h';
+  cout << 'r';
+  cout << 'i';
+  cout << 's';
+  cout << '_';
+  cout << 10;
+}
