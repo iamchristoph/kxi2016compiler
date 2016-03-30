@@ -1,4 +1,4 @@
-// test.kxi
+// test.kxi  austin@financialtown.com job enquiry
 class word{
   public char w[];
   private int size;
@@ -22,7 +22,6 @@ class io{
   }
   public int write(char w[]) {
     int i = 0;
-    return write(read());
     while (w[i] != '\0') {
       cout << w[i];
       i = i + 1;

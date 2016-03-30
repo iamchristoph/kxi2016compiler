@@ -83,7 +83,7 @@ def get(code) :
 
 def frame(code) :
   ths = code[3]
-  ld = load(ths[0], 'LDR') # get load instuctions for this pointer
+  ld = getvar(symtab.get(ths)) # get load instuctions for this pointer
   return [[code[0], 'MOV', 'R1', 'SP', code[5] + ' Frame ' + code[2]],\
           ['ADI', 'R1', -(getsize(code[2]) + 12)],\
           ['CMP', 'R1', 'SL'],\
@@ -91,22 +91,21 @@ def frame(code) :
           ['MOV', 'R7', 'SP', '; store the current SP in R7 for later assignment as new FP'],\
           ['ADI', 'SP', -4],\
           ['STR', 'FP', 'SP', '; store the previous frame pointer at FP - 4'],\
-          ['ADI', 'SP', -4],
-          ['LDR', 'R2', ths]] +  ld + \
-          [['STR', 'R3', 'SP', '; store the this pointer at FP - 8']]
+          ['ADI', 'SP', -4]] +  ld + \
+          [['STR', 'R3', 'SP', '; store the this pointer at FP - 8'], ['ADI', 'SP', -4, ';  end Frame' ]]
 
 def call(code) :
-  return [['MOV', 'FP', 'R7'],\
+  return [['MOV', 'FP', 'R7', '; call'],\
           ['MOV', 'R0', 'PC'],\
           ['ADI', 'R0', 36],\
           ['STR', 'R0', 'R7'],\
-          ['JMP', code[2]]]
+          ['JMP', code[2], '; call']]
 
 def stop(code) :
   return [[code[0], 'TRP', '0']]
 
 def func(code) :
-  return [[code[0], 'ADI', 'SP', str(symtab.get(code[2]).data.size)]]
+  return [[code[0], 'ADI', 'SP', str(-symtab.get(code[2]).data.size)]]
 
 def push(code) :
   p = symtab.get(code[2])
@@ -119,15 +118,12 @@ def push(code) :
     st = 'STB'
   else:
     print 'Expected data to load should be loadable as int or char, got ', p
-  offset = p.data.offset - 12
-  l = load(p.symid[0], ld) # load(char, load, dest='R3', src='R2', temp='R1')
+  offset = p.data.offset
+  l = getvar(p) # load(char, load, dest='R3', src='R2', temp='R1')
   comment = '; Push ' + code[2] + ' size: ' + str(code[3]) + ' type: ' + p.data.returntype + ' offset: ' + str(p.data.offset)
-  return [['MOV', 'R0', 'SP', comment],\
-          ['MOV', 'R2', 'FP'],\
-          ['ADI', 'R2', offset],\
-          l,\
-          [st, 'R3', 'R0'],\
-          ['ADI', 'SP', size]]
+  return [['MOV', 'R0', 'SP', comment]] + l + \
+          [[st, 'R3', 'R0'],\
+          ['ADI', 'SP', -size]]
 
 def load(char, ld, dest='R3', src='R2', temp='R1') : 
   if char == 'R' or char == 'A' :
@@ -137,16 +133,18 @@ def load(char, ld, dest='R3', src='R2', temp='R1') :
 
 def getvar(sym) :
   sid = sym.symid
-  if sid[0] == 'N' :
+  if sid[0] == 'N' or sid == 'this' :
     return [['LDR', 'R3', sid]]
   elif sid[0] == 'H' :
     return [['LDB', 'R3', sid]]
-  elif sid[0] == 'L' :
+  elif sid[0] == 'L' or sid[0] == 'P' :
     if sym.data.size == 4 :
       ld = 'LDR'
     else :
       ld = 'LDB'
     return [['MOV', 'R2', 'FP'], ['ADI', 'R2', sym.data.offset - 12]]+load(sid[0], ld)
+  else :
+    print sym
 
 def ref(code) :
   return [code]
@@ -169,7 +167,15 @@ def peek(code) : #PEEK L164 ;  get return value
   return [['MOV', 'R0', 'SP', code[5]], [load, 'R1', 'R0'], ['MOV', 'R2', 'FP'], ['ADI', 'R2', offset], [store, 'R1', 'R2']]
 
 def rtn(code) :
-  return [['LDR', 'R0', 'FP'],['JMR', 'R0']]
+  return [['MOV', 'R0', 'FP', '; rtn'],\
+          ['ADI', 'R0', '-4'],\
+          ['LDR', 'R1', 'R0', '; get the previous frame pointer'],\
+          ['ADI', 'R0', '-4'],\
+          ['LDR', 'R2', 'R0', '; get the this pointer'],\
+          ['LDR', 'R3', 'FP'],\
+          ['STR', 'R2', 'FP'],\
+          ['MOV', 'FP', 'R1'],\
+          ['JMR', 'R3', '; rtn']]
 
 def add(code) :
   return [code]

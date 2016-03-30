@@ -1,20 +1,79 @@
-Start FRAME M101 this ;  Frame main backpatched to M101 
-CALL M101  backpatched to M101 
+Start FRAME M123 this ;  Frame main backpatched to M123 
+CALL M123  backpatched to M123 
 End STOP 
-M101 FUNC M101 ; void kxi2016 main() 
-WRITE H102 char ;  cout << 'C'(char) 
-WRITE H103 char ;  cout << 'h'(char) 
-WRITE H104 char ;  cout << 'r'(char) 
-WRITE H105 char ;  cout << 'i'(char) 
-WRITE H106 char ;  cout << 's'(char) 
-WRITE H107 char ;  cout << ' '(char) 
-WRITE N108 int ;  cout << 10(int) 
+M102 FUNC M102 ;  void printname([]) 
+WRITE H103 char ;  cout << 'C'(char) 
+WRITE H104 char ;  cout << 'h'(char) 
+WRITE H105 char ;  cout << 'r'(char) 
+WRITE H106 char ;  cout << 'i'(char) 
+WRITE H107 char ;  cout << 's'(char) 
+WRITE H108 char ;  cout << ' '(char) 
+WRITE H109 char ;  cout << 'T'(char) 
+WRITE H110 char ;  cout << 'e'(char) 
+WRITE H105 char ;  cout << 'r'(char) 
+WRITE H105 char ;  cout << 'r'(char) 
+WRITE H111 char ;  cout << 'y'(char) 
+RTN ; return from function func 
+M113 FUNC M113 ;  void printnum(['P112']) 
+WRITE P112 int ;  cout << n(int) 
+RTN ; return from function func 
+M115 FUNC M115 ;  void printchar(['P114']) 
+WRITE P114 char ;  cout << c(char) 
+RTN ; return from function func 
+M116 FUNC M116 ;  void printall([]) 
+FRAME M102 this ;  printname([]) 
+CALL M102 
+FRAME M115 this ;  printchar(['P114']) 
+PUSH H108 1 ;  ' ', offset = 0 
+CALL M115 
+FRAME M115 this ;  printchar(['P114']) 
+PUSH H117 1 ;  'Q', offset = 0 
+CALL M115 
+FRAME M115 this ;  printchar(['P114']) 
+PUSH H108 1 ;  ' ', offset = 0 
+CALL M115 
+FRAME M113 this ;  printnum(['P112']) 
+PUSH N118 4 ;  10, offset = 0 
+CALL M113 
+FRAME M115 this ;  printchar(['P114']) 
+PUSH H108 1 ;  ' ', offset = 0 
+CALL M115 
+FRAME M102 this ;  printname([]) 
+CALL M102 
+FRAME M115 this ;  printchar(['P114']) 
+PUSH H119 1 ;  '_', offset = 0 
+CALL M115 
+RTN ; return from function func 
+M122 FUNC M122 ;  void printthese(['P120', 'P121']) 
+FRAME M113 this ;  printnum(['P112']) 
+PUSH P120 4 ;  n, offset = 0 
+CALL M113 
+FRAME M115 this ;  printchar(['P114']) 
+PUSH P121 1 ;  c, offset = -4 
+CALL M115 
+RTN ; return from function func 
+M123 FUNC M123 ; void kxi2016 main() 
+FRAME M116 L124 ;  void printall([]) 
+CALL M116 
+FRAME M122 L124 ['N125', 'H126'] ;  void printthese(['P120', 'P121']) 
+PUSH N125 4 ;  7, offset = 0 
+PUSH H126 1 ;  'V', offset = 0 
+CALL M122 
 RTN ; return from function main 
-H105 .BYT 'i' 
-H104 .BYT 'r' 
-H107 .BYT ' ' 
-H106 .BYT 's' 
-H103 .BYT 'h' 
-H102 .BYT 'C' 
-N108 .INT 10 
+S127 FUNC S127 ;  static initializer for classprinter 
+RTN ; return from static initializer for printer 
+H105 .BYT 'r' 
+H104 .BYT 'h' 
+H107 .BYT 's' 
+H106 .BYT 'i' 
+H103 .BYT 'C' 
+N118 .INT 10 
+H108 .BYT ' ' 
+H109 .BYT 'T' 
+N125 .INT 7 
+H119 .BYT '_' 
+H110 .BYT 'e' 
+H111 .BYT 'y' 
+H117 .BYT 'Q' 
+H126 .BYT 'V' 
 this .INT 0 

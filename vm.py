@@ -72,7 +72,8 @@ class Assembler :
     destination = 0
     source = 0
     label = asm[i]
-    #print asm
+    if debug :
+      print asm
   # getting opcode or returning data if directive
     i += 1
     if label in this.SymbalTable :
@@ -202,7 +203,7 @@ class VirtualMachine :
           this.Regs[3] = pack('i', int(unpack('c', this.Regs[3])))
         elif destination is 99 :
           print "tID =", threadID, opcode, destination, source
-          print 'R0 =', unpack('i', this.Regs[0])[0], 'R1 =', unpack('i', this.Regs[1])[0], 'R3 =', unpack('i', this.Regs[3])[0], 'R4 =', unpack('i', this.Regs[4])[0]
+          print 'R0 =', unpack('i', this.Regs[0])[0], 'R1 =', unpack('i', this.Regs[1])[0], 'R2 =', unpack('i', this.Regs[2])[0], 'R3 =', unpack('i', this.Regs[3])[0], 'R4 =', unpack('i', this.Regs[4])[0]
           print 'R5 =', unpack('i', this.Regs[5])[0], 'R6 =', unpack('i', this.Regs[6])[0], 'R7 =', unpack('i', this.Regs[7])[0], 'PC =', unpack('i', this.Regs[PC])[0]
           print 'SP =', unpack('i', this.Regs[SP])[0], 'FP =', unpack('i', this.Regs[FP])[0], 'SL =', unpack('i', this.Regs[SL])[0], 'SB =', unpack('i', this.Regs[SB])[0]
           i, = unpack('i', this.Regs[SP])

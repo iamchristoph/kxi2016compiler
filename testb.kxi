@@ -1,9 +1,41 @@
+class printer {
+  public void printname() {  
+    cout << 'C';
+    cout << 'h';
+    cout << 'r';
+    cout << 'i';
+    cout << 's';
+    cout << ' ';
+    cout << 'T';
+    cout << 'e';
+    cout << 'r';
+    cout << 'r';
+    cout << 'y';
+  }
+  public void printnum(int n) {
+    cout << n;
+  }
+  public void printchar(char c) {
+    cout << c;
+  }
+  public void printall() {
+    printname();
+    printchar(' ');
+    printchar('Q');
+    printchar(' ');
+    printnum(10);
+    printchar(' ');
+    printname();
+    printchar('_');
+  }
+  public void printthese(int n, char c) {
+    printnum(n);
+    printchar(c);
+  }
+}
+
 void kxi2016 main() {
-  cout << 'C';
-  cout << 'h';
-  cout << 'r';
-  cout << 'i';
-  cout << 's';
-  cout << ' ';
-  cout << 10;
+  printer p;
+  p.printall();
+  p.printthese(7, 'V');
 }
