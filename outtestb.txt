@@ -1,79 +1,143 @@
-Start FRAME M123 this ;  Frame main backpatched to M123 
-CALL M123  backpatched to M123 
-End STOP 
-M102 FUNC M102 ;  void printname([]) 
-WRITE H103 char ;  cout << 'C'(char) 
-WRITE H104 char ;  cout << 'h'(char) 
-WRITE H105 char ;  cout << 'r'(char) 
-WRITE H106 char ;  cout << 'i'(char) 
-WRITE H107 char ;  cout << 's'(char) 
-WRITE H108 char ;  cout << ' '(char) 
-WRITE H109 char ;  cout << 'T'(char) 
-WRITE H110 char ;  cout << 'e'(char) 
-WRITE H105 char ;  cout << 'r'(char) 
-WRITE H105 char ;  cout << 'r'(char) 
-WRITE H111 char ;  cout << 'y'(char) 
+Start FRAME M133 N213 ;  Frame main backpatched to M133 backpatched to N213 
+CALL M133  backpatched to M133 
+STOP 
+X107 FUNC X107 ;  Contructor for class printer 
+NEW N108 T140 1 ;  new array of charof size 10 
+MOV T140 I106 ;  name(offset=0) = T140 
+AEF I106 N109 A143 ;  name + 0 * sizeof char (pointer) 
+MOV H110 A143 ;  A143(offset=-12) = 'C' 
+AEF I106 N111 A145 ;  name + 1 * sizeof char (pointer) 
+MOV H112 A145 ;  A145(offset=-14) = 'h' 
+AEF I106 N113 A147 ;  name + 2 * sizeof char (pointer) 
+MOV H114 A147 ;  A147(offset=-16) = 'r' 
+AEF I106 N115 A149 ;  name + 3 * sizeof char (pointer) 
+MOV H116 A149 ;  A149(offset=-18) = 'i' 
+AEF I106 N117 A151 ;  name + 4 * sizeof char (pointer) 
+MOV H118 A151 ;  A151(offset=-20) = 's' 
+AEF I106 N103 A153 ;  name + 5 * sizeof char (pointer) 
+MOV H119 A153 ;  A153(offset=-22) = 'T' 
+AEF I106 N120 A155 ;  name + 6 * sizeof char (pointer) 
+MOV H121 A155 ;  A155(offset=-24) = 'e' 
+AEF I106 N122 A157 ;  name + 7 * sizeof char (pointer) 
+MOV H114 A157 ;  A157(offset=-26) = 'r' 
+AEF I106 N123 A159 ;  name + 8 * sizeof char (pointer) 
+MOV H114 A159 ;  A159(offset=-28) = 'r' 
+AEF I106 N124 A161 ;  name + 9 * sizeof char (pointer) 
+MOV H125 A161 ;  A161(offset=-30) = 'y' 
+RTN ; return from function xtor 
+M126 FUNC M126 ;  void printname([]) 
+MOV N109 L127 ;  i(offset=0) = 0 
+begin164 LT N103 L127 T165 ;  T165 = i < 5 
+BF T165 endwhile166 ;  BranchFalse T165 (bool) endwhile166 
+AEF I106 L127 A167 ;  name + i * sizeof char (pointer) 
+WRITE A167 char ;  cout << A167(char) 
+ADD N111 L127 T168 ;  T168 = i + 1 
+MOV T168 L127 ;  i(offset=0) = T168 
+JMP begin164 ;  Jump begin164 
+endwhile166 WRITE H128 char ;  cout << ' '(char) 
+begin170 LT N108 L127 T171 ;  T171 = i < 10 
+BF T171 endwhile172 ;  BranchFalse T171 (bool) endwhile172 
+AEF I106 L127 A173 ;  name + i * sizeof char (pointer) 
+WRITE A173 char ;  cout << A173(char) 
+ADD N111 L127 T174 ;  T174 = i + 1 
+MOV T174 L127 ;  i(offset=0) = T174 
+JMP begin170 ;  Jump begin170 
+endwhile172 RTN ; return from function func 
+M131 FUNC M131 ;  void printrange(['P129', 'P130']) 
+begin176 LE P130 P129 T177 ;  T177 = start <= end 
+BF T177 endwhile178 ;  BranchFalse T177 (bool) endwhile178 
+AEF I106 P129 A179 ;  name + start * sizeof char (pointer) 
+WRITE A179 char ;  cout << A179(char) 
+ADD N111 P129 T180 ;  T180 = start + 1 
+MOV T180 P129 ;  start(offset=0) = T180 
+JMP begin176 ;  Jump begin176 
+endwhile178 RTN ; return from function func 
+M132 FUNC M132 ;  void printnum([]) 
+WRITE I102 int ;  cout << num(int) 
 RTN ; return from function func 
-M113 FUNC M113 ;  void printnum(['P112']) 
-WRITE P112 int ;  cout << n(int) 
-RTN ; return from function func 
-M115 FUNC M115 ;  void printchar(['P114']) 
-WRITE P114 char ;  cout << c(char) 
-RTN ; return from function func 
-M116 FUNC M116 ;  void printall([]) 
-FRAME M102 this ;  printname([]) 
-CALL M102 
-FRAME M115 this ;  printchar(['P114']) 
-PUSH H108 1 ;  ' ', offset = 0 
-CALL M115 
-FRAME M115 this ;  printchar(['P114']) 
-PUSH H117 1 ;  'Q', offset = 0 
-CALL M115 
-FRAME M115 this ;  printchar(['P114']) 
-PUSH H108 1 ;  ' ', offset = 0 
-CALL M115 
-FRAME M113 this ;  printnum(['P112']) 
-PUSH N118 4 ;  10, offset = 0 
-CALL M113 
-FRAME M115 this ;  printchar(['P114']) 
-PUSH H108 1 ;  ' ', offset = 0 
-CALL M115 
-FRAME M102 this ;  printname([]) 
-CALL M102 
-FRAME M115 this ;  printchar(['P114']) 
-PUSH H119 1 ;  '_', offset = 0 
-CALL M115 
-RTN ; return from function func 
-M122 FUNC M122 ;  void printthese(['P120', 'P121']) 
-FRAME M113 this ;  printnum(['P112']) 
-PUSH P120 4 ;  n, offset = 0 
-CALL M113 
-FRAME M115 this ;  printchar(['P114']) 
-PUSH P121 1 ;  c, offset = -4 
-CALL M115 
-RTN ; return from function func 
-M123 FUNC M123 ; void kxi2016 main() 
-FRAME M116 L124 ;  void printall([]) 
-CALL M116 
-FRAME M122 L124 ['N125', 'H126'] ;  void printthese(['P120', 'P121']) 
-PUSH N125 4 ;  7, offset = 0 
-PUSH H126 1 ;  'V', offset = 0 
-CALL M122 
-RTN ; return from function main 
-S127 FUNC S127 ;  static initializer for classprinter 
+M133 FUNC M133 ; void kxi2016 main() 
+NEW N103 T182 1 ;  new array of charof size 5 
+MOV T182 L135 ;  name(offset=-4) = T182 
+AEF L135 N109 A185 ;  name + 0 * sizeof char (pointer) 
+MOV H110 A185 ;  A185(offset=-20) = 'C' 
+AEF L135 N111 A187 ;  name + 1 * sizeof char (pointer) 
+MOV H112 A187 ;  A187(offset=-22) = 'h' 
+AEF L135 N113 A189 ;  name + 2 * sizeof char (pointer) 
+MOV H114 A189 ;  A189(offset=-24) = 'r' 
+AEF L135 N115 A191 ;  name + 3 * sizeof char (pointer) 
+MOV H116 A191 ;  A191(offset=-26) = 'i' 
+AEF L135 N117 A193 ;  name + 4 * sizeof char (pointer) 
+MOV H118 A193 ;  A193(offset=-28) = 's' 
+AEF L135 N109 A195 ;  name + 0 * sizeof char (pointer) 
+WRITE A195 char ;  cout << A195(char) 
+AEF L135 N111 A196 ;  name + 1 * sizeof char (pointer) 
+WRITE A196 char ;  cout << A196(char) 
+AEF L135 N113 A197 ;  name + 2 * sizeof char (pointer) 
+WRITE A197 char ;  cout << A197(char) 
+AEF L135 N115 A198 ;  name + 3 * sizeof char (pointer) 
+WRITE A198 char ;  cout << A198(char) 
+AEF L135 N117 A199 ;  name + 4 * sizeof char (pointer) 
+WRITE A199 char ;  cout << A199(char) 
+WRITE H136 char ;  cout << '\n'(char) 
+NEWI 9 L200 ;  new instance of printer -> L200 
+FRAME S137 L200 ;  static initializer for class printer backpatched to S137 
+CALL S137  backpatched to S137 
+PEEK L200 
+FRAME X107 L200 ;  printer printer([]) 
+CALL X107 
+PEEK L200 ;  get return value 
+MOV L200 L134 ;  p(offset=0) = L200 
+REF L134 I102 R202 ;  R202 = p.num offset = 5 
+WRITE R202 int ;  cout << R202(int) 
+REF L134 I104 R203 ;  R203 = p.letter offset = 4 
+WRITE R203 char ;  cout << R203(char) 
+WRITE H136 char ;  cout << '\n'(char) 
+FRAME M126 L134 ;  void printname([]) 
+CALL M126 
+WRITE H136 char ;  cout << '\n'(char) 
+FRAME M131 L134 ['N109', 'N117'] ;  void printrange(['P129', 'P130']) 
+PUSH N109 4 ;  0, offset = 0 
+PUSH N117 4 ;  4, offset = 0 
+CALL M131 
+WRITE H128 char ;  cout << ' '(char) 
+FRAME M131 L134 ['N103', 'N124'] ;  void printrange(['P129', 'P130']) 
+PUSH N103 4 ;  5, offset = 0 
+PUSH N124 4 ;  9, offset = 0 
+CALL M131 
+begin207 REF L134 I102 R208 ;  R208 = p.num offset = 5 
+NE N109 R208 T209 ;  T209 = R208 != 0 
+BF T209 endwhile210 ;  BranchFalse T209 (bool) endwhile210 
+REF L134 I102 R211 ;  R211 = p.num offset = 5 
+READ R211 int ;  cin >> R211(int) 
+FRAME M132 L134 ;  void printnum([]) 
+CALL M132 
+JMP begin207 ;  Jump begin207 
+endwhile210 RTN ; return from function main 
+S137 FUNC S137 ;  static initializer for classprinter 
+MOV N103 I102 ;  num(offset=5) = 5 
+MOV H105 I104 ;  letter(offset=4) = 'z' 
 RTN ; return from static initializer for printer 
-H105 .BYT 'r' 
-H104 .BYT 'h' 
-H107 .BYT 's' 
-H106 .BYT 'i' 
-H103 .BYT 'C' 
-N118 .INT 10 
-H108 .BYT ' ' 
-H109 .BYT 'T' 
-N125 .INT 7 
-H119 .BYT '_' 
-H110 .BYT 'e' 
-H111 .BYT 'y' 
-H117 .BYT 'Q' 
-H126 .BYT 'V' 
-this .INT 0 
+H136 .BYT \n 
+N115 .INT 3 
+N117 .INT 4 
+N111 .INT 1 
+N113 .INT 2 
+H128 .BYT   
+H125 .BYT y 
+H121 .BYT e 
+N103 .INT 5 
+N109 .INT 0 
+N108 .INT 10 
+H118 .BYT s 
+H119 .BYT T 
+H112 .BYT h 
+H110 .BYT C 
+H116 .BYT i 
+H114 .BYT r 
+H105 .BYT z 
+N124 .INT 9 
+N120 .INT 6 
+N123 .INT 8 
+N122 .INT 7 
+N213 .INT 0 
+End STOP ; end of code, beginning of heap 

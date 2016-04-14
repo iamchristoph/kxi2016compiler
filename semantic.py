@@ -2,7 +2,7 @@ from syntaxer import symtable
 
 DEBUG = False
 ops = {'(': 0, ')': 0, '[': 0, ']': 0, '=': 1, 'or': 2, 'and': 2, '==': 3, '!=': 3, '<': 4, '<=': 4, '>': 4, '>=': 4, '+': 5, '-': 5, '*': 6, '/': 6}
-var = ('lvar', 'ivar', 'rivar','temp', 'alvar', 'aivar')
+var = ('lvar', 'ivar', 'rivar','temp', 'alvar', 'aivar', 'param')
 types = ('int', 'char', 'bool', 'void', 'sym')
 
 class stack :
@@ -31,9 +31,9 @@ LBL = stack()
 lblQ = []
 statcon = None
 statcons = {}
-Icode = [['Start', 'FRAME', 'main', 'this', None, ';  Frame main'], \
+Icode = [['Start', 'FRAME', 'main', 'null', None, ';  Frame main'], \
           [None, 'CALL', 'main', None, None, ''], \
-          ['End', 'STOP', None, None, None, '']]
+          [None, 'STOP', None, None, None, '']]
 
 def addscons() :
   for staticinit in statcons.iteritems() :
@@ -43,15 +43,27 @@ def addscons() :
       Icode.append(instruction)
   for sym in symtab.table.iteritems() :
     if sym[0][0] == 'N' :
-      Icode.append([sym[0], '.INT', sym[1].value, None, None, None])
+      if sym[1].kind == 'null':
+        Icode.append([sym[0], '.INT', '0', None, None, None])
+        backpatch('null', sym[0])
+      elif sym[1].value == 0:
+        Icode.append([sym[0], '.INT', '0', None, None, None])
+      else:
+        Icode.append([sym[0], '.INT', sym[1].value, None, None, None])
     elif sym[0][0] == 'H' :
-      Icode.append([sym[0], '.BYT', sym[1].value, None, None, None])
+      Icode.append([sym[0], '.BYT', sym[1].value.strip('\''), None, None, None])
     elif sym[0][0] == 'B' :
       if sym[1].value == 'true' :
         Icode.append([sym[0], '.INT', 1, None, None, None])
       elif sym[1].value == 'false' :
-        Icode.append([sym[0], '.INT', 0, None, None, None])
-  Icode.append(['this', '.INT', '0', None, None, None])
+        Icode.append([sym[0], '.INT', '0', None, None, None])
+  idsym = symtab.idsymfromlexscope('null', 'g')
+  if not idsym:
+    sid = symtab.insert('null', 'null', symtable.data(typ='null', returntype='null', param=None, accessmod='public', size=4), scope='g', override=True)
+    Icode.append([sid, '.INT', '0', None, None, None])
+    backpatch('null', sid)
+  #Icode.append(['this', '.INT', '0', None, None, None])
+  Icode.append(['End', 'STOP', None, None, '; end of code, beginning of heap'])
 
 def Iprint() :
   for quad in Icode :
@@ -62,15 +74,17 @@ def Iprint() :
 
 def opop() :
   op = OPS.pop()
-  if op == '=' :
-    r = SAS.pop()
-    l = SAS.pop()
+  r = SAS.pop()
+  l = SAS.pop()
+  if op == '=' :  
     if DEBUG :
       print '#=', l.data.symid, r.data.symid
     if l.data.kind not in var :
       return False, 'Cannot assign to ' + l.data.kind
     elif l.data.data.type != r.data.data.returntype and r.data.data.returntype != 'null':
       if l.data.data.type == 'ref' and l.data.data.returntype == r.data.data.returntype :
+        pass
+      elif l.data.data.type[0] == 'a' and l.data.data.returntype == r.data.data.returntype :
         pass
       else:
         return False, 'Cannot assign ' + r.data.data.returntype + ' to ' + l.data.data.type
@@ -81,8 +95,6 @@ def opop() :
       Icode.append([LBL.pop(), 'MOV', r.data.symid, l.data.symid, None, ';  ' + l.value + '(offset=' + str(l.data.data.offset) + ') = ' + r.value]) # r -> l
     return True,
   elif op == '+' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#+', l.data.symid, r.data.symid
     if l.data.data.returntype != 'int' :
@@ -94,8 +106,6 @@ def opop() :
       Icode.append([LBL.pop(), 'ADD', r.data.symid, l.data.symid, res[1],  ';  ' + res[1] + ' = ' + l.value + ' + ' + r.value]) # r + l -> res      
       return res
   elif op == '-' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#-', l.data.symid, r.data.symid
     if l.data.data.returntype != 'int' :
@@ -107,8 +117,6 @@ def opop() :
       Icode.append([LBL.pop(), 'SUB', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' - ' + r.value]) # r - l -> res      
       return res
   elif op == '*' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#*', l.data.symid, r.data.symid
     if l.data.data.returntype != 'int' :
@@ -120,8 +128,6 @@ def opop() :
       Icode.append([LBL.pop(), 'MUL', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' * ' + r.value]) # r * l -> res      
       return res
   elif op == '/' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#/', l.data.symid, r.data.symid
     if l.data.data.returntype != 'int' :
@@ -133,8 +139,6 @@ def opop() :
       Icode.append([LBL.pop(), 'DIV', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' / ' + r.value]) # r / l -> res      
       return res
   elif op == 'or' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#or', l.data.symid, r.data.symid
     if l.data.data.returntype != 'bool' :
@@ -146,8 +150,6 @@ def opop() :
       Icode.append([LBL.pop(), 'OR', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' or ' + r.value]) # r or l -> res      
       return res
   elif op == 'and' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#and', l.data.symid, r.data.symid
     if l.data.data.returntype != 'bool' :
@@ -159,37 +161,32 @@ def opop() :
       Icode.append([LBL.pop(), 'AND', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' and ' + r.value]) # r and l -> res      
       return res
   elif op == '==' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#==', l.data.symid, r.data.symid
-    if l.data.data.returntype not in types :
-      return False, 'Operator \'==\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
-    elif r.data.data.returntype != l.data.data.returntype :
-      return False, 'Operator \'==\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
+    if l.data.data.returntype not in syntaxer.classnames :
+      print l.data, r.data
+      return False, 'Operator \'==\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype + 'FAIL'
+    elif r.data.data.returntype != l.data.data.returntype and r.data.data.returntype != 'null' :
+      return False, 'Operator \'==\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype 
     else:
       res =  pushtemp('bool', 'bool')
       Icode.append([LBL.pop(), 'EQ', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' == ' + r.value]) # r == l -> res      
       return res
   elif op == '!=' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#!=', l.data.symid, r.data.symid
-    if l.data.data.returntype not in types :
+    if l.data.data.returntype not in syntaxer.classnames :
       return False, 'Operator \'!=\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
-    elif r.data.data.returntype != l.data.data.returntype :
+    elif r.data.data.returntype != l.data.data.returntype and r.data.data.returntype != 'null' :
       return False, 'Operator \'!=\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
     else:
       res =  pushtemp('bool', 'bool')
       Icode.append([LBL.pop(), 'NE', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' != ' + r.value]) # r != l -> res      
       return res
   elif op == '<' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#<', l.data.symid, r.data.symid
-    if l.data.data.returntype != 'int' :
+    if l.data.data.returntype != 'int' and l.data.data.returntype != 'char' :
       return False, 'Operator \'<\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
     elif r.data.data.returntype != l.data.data.returntype :
       return False, 'Operator \'<\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
@@ -198,11 +195,9 @@ def opop() :
       Icode.append([LBL.pop(), 'LT', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' < ' + r.value]) # l < r -> res      
       return res
   elif op == '<=' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#<=', l.data.symid, r.data.symid
-    if l.data.data.returntype != 'int' :
+    if l.data.data.returntype != 'int' and l.data.data.returntype != 'char' :
       return False, 'Operator \'<=\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
     elif r.data.data.returntype != l.data.data.returntype :
       return False, 'Operator \'<=\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
@@ -211,11 +206,9 @@ def opop() :
       Icode.append([LBL.pop(), 'LE', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' <= ' + r.value]) # l <= r -> res      
       return res
   elif op == '>' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#>', l.data.symid, r.data.symid
-    if l.data.data.returntype != 'int' :
+    if l.data.data.returntype != 'int' and l.data.data.returntype != 'char' :
       return False, 'Operator \'>\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
     elif r.data.data.returntype != l.data.data.returntype :
       return False, 'Operator \'>\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.datareturn.type
@@ -224,11 +217,9 @@ def opop() :
       Icode.append([LBL.pop(), 'GT', r.data.symid, l.data.symid, res[1], ';  ' + res[1] + ' = ' + l.value + ' > ' + r.value]) # l > r -> res      
       return res
   elif op == '>=' :
-    r = SAS.pop()
-    l = SAS.pop()
     if DEBUG :
       print '#>=', l.data.symid, r.data.symid
-    if l.data.data.returntype != 'int' :
+    if l.data.data.returntype != 'int' and l.data.data.returntype != 'char' :
       return False, 'Operator \'>=\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
     elif r.data.data.returntype != l.data.data.returntype :
       return False, 'Operator \'>=\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype
@@ -328,7 +319,7 @@ def iexist(stable=None) :
     res = pushtemp(symbol.data.type, symbol.data.returntype, 'return', i.data[1], symbol.value + 'rtn')
     rsym = symtab.get(res[1])
     Icode.append([LBL.pop(), 'FRAME', symbol.symid, 'this', None, ';  ' + symbol.value + '(' + str(symbol.data.param) + ')']) 
-    print rsym, rsym.data.param
+    #print rsym, rsym.data.param
     for p in rsym.data.param.data :
       sym = symtab.get(p.symid)
       Icode.append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + sym.value + ', offset = ' + str(sym.data.offset)]) 
@@ -419,7 +410,11 @@ def rexist() :
   if DEBUG :
     print '#REXIST', SAS.top().data.symid
   if not done :
-    Icode.append([LBL.pop(), 'REF', objec.data.symid, symbol.symid, ref[1], ';  ' + ref[1] + ' = ' + objec.value + '.' + symbol.value + ' offset = ' + str(symbol.data.offset)]) # l.r -> ref      
+    if objec.data.kind == 'this' :
+      oid = symtab.insert('Z' + objec.data.symid, 'Z' + objec.data.kind, override=True, data=symtable.data(typ='int', returntype='int', param=[], accessmod='private'))
+    else:
+      oid = objec.data.symid
+    Icode.append([LBL.pop(), 'REF', oid, symbol.symid, ref[1], ';  ' + ref[1] + ' = ' + objec.value + '.' + symbol.value + ' offset = ' + str(symbol.data.offset)]) # l.r -> ref      
   return ref 
 
 def opush(op) :
@@ -427,7 +422,7 @@ def opush(op) :
   if val == 0 :
     OPS.push(op)
   else :
-    while OPS.length > 0 and val < ops[OPS.top()] :
+    while OPS.length > 0 and val <= ops[OPS.top()] :
       success =  opop()
       if not success[0] :
         return success
@@ -546,7 +541,7 @@ def matchfunc(funcsar, symbol) :
     return False, 'The function ' + symbol.value + ' requires exactly ' + str(len(symbol.data.param)) + ' arguments'
   for i in range(len(symbol.data.param)) : #params must be same type and order
     #p, q in funcsar.data[1].data, symbol.data.param
-    if funcsar.data[1].data[i].data.returntype != symtab.get(symbol.data.param[i]).data.type :
+    if funcsar.data[1].data[i].data.returntype != symtab.get(symbol.data.param[i]).data.type and funcsar.data[1].data[i].data.returntype != 'null' :
       return False, 'The function ' + symbol.value + ' should take a ' + symtab.get(symbol.data.param[i]).data.type + ' got ' + funcsar.data[1].data[i].data.returntype
   return True,  symbol  
 
@@ -613,7 +608,7 @@ def rtn(default=False) :
   #print val, rval
   if default :
     if rval[0] == 'xtor' :
-      Icode.append([LBL.pop(), 'RETURN', 'this', None, None, '; return from function ' + rval[0]])
+      Icode.append([LBL.pop(), 'RTN', None, None, None, '; return from function ' + rval[0]])
       return True,
     elif rval[1][0] == 'void' or rval[1][1] :
       Icode.append([LBL.pop(), 'RTN', None, None, None, '; return from function ' + rval[0]])
@@ -625,14 +620,18 @@ def rtn(default=False) :
   elif val == None :
     if rval[1][0] == 'void' :
       Icode.append([LBL.pop(), 'RTN', None, None, None, '; return from function ' + rval[0]])
+      RTN.push(rval)
       return True,
     else :
       return False, 'The function must return type ' + rval[1][0] + ' got void'
-  elif val.data.data.returntype not in rval[1] :
+  elif val.data.data.returntype not in rval[1] and val.data.data.returntype != 'null' :
     return False, 'The function must return type ' + rval[1][0] + ' got ' + val.data.data.returntype
   else :
     if not default :
-      RTN.push(('func', (val.data.data.returntype, True)))
+      if val.data.data.returntype == 'null':
+        RTN.push( rval)
+      else:
+        RTN.push(('func', (val.data.data.returntype, True)))
     if DEBUG :
       print '#return ' + rval[1][0]
     Icode.append([LBL.pop(), 'RETURN', val.data.symid, None, None, '; return ' + val.data.data.returntype + ' ' + val.data.value + ' from function ' + rval[0]])
@@ -675,15 +674,15 @@ def newarr() :
   elif typ.value == 'void' :
     return False, 'Cannot create array of type void'
   else :
-    arr = pushtemp('@:' + typ.value, '@:'+typ.value, 'arr', index)
+    arr = pushtemp('@:' + typ.value, '@:'+typ.value, 'tarr', index)
     if typ.value == 'char' :
       dsize = 1
     else :
       dsize = 4
     size = pushtemp('int', 'int', 'siza', [index.data.symid, dsize])
     SAS.pop()
-    Icode.append([LBL.pop(), 'MUL', index.data.symid, dsize, size[1], ';  '+ index.data.value + ' * ' + str(dsize) + ' -> ' + size[1]])
-    Icode.append([LBL.pop(), 'NEW', size[1], arr[1], None, ';  new array of ' + typ.value + 'of size ' + size[1]])
+    #Icode.append([LBL.pop(), 'MUL', index.data.symid, dsize, size[1], ';  '+ index.data.value + ' * ' + str(dsize) + ' -> ' + size[1]])
+    Icode.append([LBL.pop(), 'NEW', index.data.symid, arr[1], dsize, ';  new array of ' + typ.value + 'of size ' + index.value])
     return True, 
 
 def iif(symid) :

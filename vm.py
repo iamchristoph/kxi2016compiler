@@ -47,6 +47,7 @@ class Assembler :
             else :
               i += 4
     if 'End' not in symbals :
+      print i
       symbals['End'] = i
     return symbals
   def SecondPass(this, fname) :
@@ -155,7 +156,7 @@ class VirtualMachine :
     this.Regs[SP] = pack('i', this.stackbase - 4)
     this.Regs[FP] = this.Regs[SP]
     this.Regs[PC], stacklimit = pack('i', keys[0]), keys[1]
-    this.stacksize = (this.stackbase-stacklimit)/THREADS
+    this.stacksize = (this.stackbase-stacklimit - this.offset)/THREADS
     this.Regs[SL] = pack('i', (this.stackbase - this.stacksize - this.offset))
     this.threads = {}
     for x in range(THREADS + 1) :
@@ -168,8 +169,10 @@ class VirtualMachine :
     threadID=0
     newthread=-1
     this.storeThread(threadID)
+    count = 0
     while run :
       #fetch
+      count += 1
       this.restoreThread(threadID)
       pc,  = unpack('i', this.Regs[PC])
       opcode, destination, source = unpack('iii', this.mem[pc:pc+step])
@@ -196,7 +199,7 @@ class VirtualMachine :
           c = chr(this.Regs[3][0])
           sys.stdout.write(c)
         elif destination is 4 : # read char
-          this.Regs[3] = pack('cxxx', sys.stdin.read(1))
+          this.Regs[3] = pack('cxxx', raw_input()[0])
         elif destination is 10 :
           this.Regs[3] = pack('cxxx', chr(unpack('i', this.Regs[3])))
         elif destination is 11 :
@@ -206,12 +209,13 @@ class VirtualMachine :
           print 'R0 =', unpack('i', this.Regs[0])[0], 'R1 =', unpack('i', this.Regs[1])[0], 'R2 =', unpack('i', this.Regs[2])[0], 'R3 =', unpack('i', this.Regs[3])[0], 'R4 =', unpack('i', this.Regs[4])[0]
           print 'R5 =', unpack('i', this.Regs[5])[0], 'R6 =', unpack('i', this.Regs[6])[0], 'R7 =', unpack('i', this.Regs[7])[0], 'PC =', unpack('i', this.Regs[PC])[0]
           print 'SP =', unpack('i', this.Regs[SP])[0], 'FP =', unpack('i', this.Regs[FP])[0], 'SL =', unpack('i', this.Regs[SL])[0], 'SB =', unpack('i', this.Regs[SB])[0]
-          i, = unpack('i', this.Regs[SP])
-          limit, = unpack('i', this.Regs[SB])
+          i, = unpack('i', this.Regs[FP])
+          limit, = unpack('i', this.Regs[SP])
           print 'Stack: '
-          while i <= limit :
-            print unpack('i', this.mem[i:i+4])[0],# unpack('c', this.mem[i:i+1])[0],
-            i += 4  
+          fp = i
+          while i >= limit :
+            print 'FP', i - fp, ':' ,unpack('i', this.mem[i:i+4])[0]# unpack('c', this.mem[i:i+1])[0],
+            i -= 4  
           print '\n'
       elif opcode is 1 : #jump JMP to label
         this.Regs[PC] = pack('i', destination)
@@ -257,17 +261,17 @@ class VirtualMachine :
         #print 'DIV', destination, source
         this.Regs[destination] = pack('i', (unpack('i', this.Regs[destination])[0] / unpack('i', this.Regs[source])[0]))
       elif opcode is 18 : # 'AND'
-        if this.Regs[destination] and this.Regs[source] :
-          this.Regs[destination] = 1
+        if unpack('i', this.Regs[destination])[0] and unpack('i', this.Regs[source])[0] :
+          this.Regs[destination] = pack('i', 1)
         else :
-          this.Regs[destination] = 0
-        print 'AND', destination, source
+          this.Regs[destination] = pack('i', 0)
+        #print 'AND', destination, source
       elif opcode is 19 : # 'OR'
-        if this.Regs[destination] or this.Regs[source] :
-          this.Regs[destination] = 1
+        if unpack('i', this.Regs[destination])[0] or unpack('i', this.Regs[source])[0] :
+          this.Regs[destination] = pack('i', 1)
         else :
-          this.Regs[destination] = 0
-        print 'OR', destination, source
+          this.Regs[destination] = pack('i', 0)
+        #print 'OR', destination, source
       elif opcode is 20 : # 'CMP'
         #print this.Regs, 'D: ', destination, 'S: ', source
         this.Regs[destination] = pack('i', (unpack('i', this.Regs[destination])[0] - unpack('i', this.Regs[source])[0]))
@@ -279,8 +283,11 @@ class VirtualMachine :
           this.Regs[destination] = pack('i', unpack('i', this.mem[_address:_address+4])[0])
         elif opcode is 23 : # 'STB' store byte register indirect addressing
           byte, = unpack('c', this.Regs[destination][0:1])
+          #print 'Byte = ', byte, _address
           this.mem[_address:_address+1] = pack('c', byte)
         elif opcode is 24 : # 'LDB' load byte register indirect addressing
+          c, = unpack('c', this.mem[_address:_address+1])
+          #print 'Byte = ', c, _address
           this.Regs[destination] = pack('cxxx', unpack('c', this.mem[_address:_address+1])[0])
       elif opcode is 25 : #  'RUN'
         newthread = this.nextID()
@@ -327,7 +334,7 @@ class VirtualMachine :
           this.mem[destination:destination+4] = pack('i', -1)
           #print 'Unlocking for', threadID
       else :
-        print "Error, Opcode not valid, got: ", opcode
+        print "Line: ", count, "Error, Opcode not valid, got: ", opcode
 
       this.storeThread(threadID)
       threadID += 1

@@ -83,7 +83,11 @@ class symtable :
             print 'Line: ', t.line, t.bit, 'The token', t.lexeme, 'has already been defined as', dup[1].data.type, 'cannot be redefined as', data.type
             sys.exit(1)
       if kind == 'ilit' or kind == 'clit' or kind == 'blit' or kind == 'null' :
-        dup = self.idsymfromlex(t.lexeme)
+        try:
+          val = t.lexeme
+        except:
+          val = t
+        dup = self.idsymfromlex(val)
         if dup :
           return dup[0]
       if kind == 'return' :
@@ -408,7 +412,7 @@ class syntaxer :
       if self.token().type == 'type' or self.token().type == 'identifier' :
         if self.semcheck :
           if self.token().lexeme not in self.classnames :
-            gensemerror('Type \''+typ+'\' DNE')
+            self.gensemerror('Type \''+ self.token().lexeme +'\' DNE')
           else :
             semantic.ipush(self.token())
         self.tkgen.next()
@@ -544,7 +548,7 @@ class syntaxer :
         if self.semcheck :
           success = semantic.rparen()
           if not success[0] :
-            gensemerror(success[1])
+            self.gensemerror(success[1])
           success = semantic.checkwhile()
           if not success[0] :
             self.gensemerror(success[1])
@@ -883,19 +887,20 @@ class syntaxer :
     semantic.syntaxer = self
     self.compilationunit()
 
-    
-    semantic.Iprint()
+    if DEBUG:
+      semantic.Iprint()
     tcode.symtab = self.symtab
     
     scopes = set('g')
     for sym in self.symtab.table.iteritems() :
       scopes.add(sym[1].scope)
-    for scope in scopes :
-      s = scope.split('.')
+    if DEBUG :
+      for scope in scopes :
+        s = scope.split('.')
+        print '-----------------------------------------------------------'
+        print self.symtab.idsymfromlexscope(s[-1], '.'.join(s[0:-1]))
+        print scope + '\n', self.symtab.symfromscope(scope)
       print '-----------------------------------------------------------'
-      print self.symtab.idsymfromlexscope(s[-1], '.'.join(s[0:-1]))
-      print scope + '\n', self.symtab.symfromscope(scope)
-    print '-----------------------------------------------------------'
     #for n in self.classnames :
     #  print self.symtab.idsymfromlexscope(n, 'g')
     #  print n + '\n', self.symtab.symfromscope('g.'+ n)

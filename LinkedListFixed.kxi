@@ -1,0 +1,220 @@
+class Node {
+	private char item;
+	private int howMany;
+	private Node next;
+
+	Node(int n, char c)
+	{
+		howMany = n;
+		item = c;
+		next = null;
+	}
+
+	public char getItem() 
+	{
+		return item;
+	}
+
+	public int getHowMany() 
+	{
+		return howMany;
+	}
+
+	public Node getNext() 
+	{
+		if (next == null)
+			return null;
+		else
+			return next;
+	}
+
+	public void setItem(char c)
+	{
+		item = c;
+	}
+
+	public void setHowMany(int n)
+	{
+		howMany = n;
+	}
+
+	public void setNext(Node n)
+	{
+		next = n;
+	}
+}
+
+class List {
+	private Node first;
+	private Node last;
+	private int count;
+	
+	List()
+	{
+
+	}
+
+	public void pushback(Node n)
+	{
+		if (last == null)
+		{
+			last = n;
+			first = n;
+		}
+		else
+		{
+			last.setNext(n);
+			last = n;
+			count = count + 1;
+		}
+	}
+
+	public void pushfront(Node n)
+	{
+		Node second;
+		if (first == null)
+		{
+			first = n;
+			last = n;
+			count = count + 1;
+		}
+		else
+		{
+			second = first;
+			n.setNext(second);
+			first = n;
+			count = count + 1;
+		} 
+	}
+
+	public Node popback()
+	{
+		Node temp;
+		if (last == null)
+			return null;
+		else 
+		{
+			temp = first;
+			while (temp.getNext().getNext() != null)
+			{
+				temp = temp.getNext();
+			}
+			last = temp;
+			temp = temp.getNext();
+			last.setNext(null);
+			count = count - 1;
+			if (count == 1)
+				first = last;
+			return temp;
+		}
+	}
+
+	public Node popfront()
+	{
+		Node temp;
+		if (first == null)
+			return null;
+		else
+		{
+			temp = first;
+			first = first.getNext();
+			count = count - 1;
+			if (count == 1)		
+				last = first;   
+			return temp;
+		}
+	}
+
+	public Node getFirst() 
+	{
+		if (first == null)
+			return null;
+		else
+			return first;
+	}
+
+	public Node getLast() 
+	{
+		if (first == null)
+			return null;
+		else
+			return last;
+	}
+	
+	public void printList()
+	{
+		Node current = getFirst();
+		while (current.getNext() != null)
+		{
+			cout << current.getHowMany();
+			cout << ' ';
+			cout << current.getItem();
+			cout << '\n';
+			current = current.getNext();
+		}
+		cout << current.getHowMany();
+		cout << ' ';
+		cout << current.getItem();
+		cout << '\n';
+	}
+	public void printFirstNode()
+	{
+		Node first = getFirst( );
+		cout << first.getHowMany();
+		cout << ' ';
+		cout << first.getItem();
+		cout << '\n';
+	}
+}
+
+void kxi2016 main( )
+{
+	List groceries;
+	Node a = new Node(1, 'a');
+	Node b = new Node(2, 'b');
+	Node c = new Node(3, 'c' );
+	Node d = new Node(4, 'd');
+	Node e = new Node(5, 'e');
+	Node f = new Node(6, 'f');
+	Node g = new Node(7, 'g');
+	Node h = new Node(8, 'h');
+	Node item;
+	groceries.pushfront(a);
+	groceries.pushfront(b);
+	groceries.pushfront(c);
+	groceries.pushfront(d);
+
+	groceries.printList();
+	cout << '\n';
+	cout << '\n';
+
+	groceries.pushfront(e);
+	groceries.pushfront(f);
+
+	groceries.printList();
+	cout << '\n';
+	cout << '\n';
+
+	item = groceries.popfront( );
+	cout << item.getItem( );
+	cout << '\n';
+	cout << '\n';
+	groceries.printList();
+	cout << '\n';
+	cout << '\n';
+	groceries.pushback(g);
+	groceries.pushback(h);
+	groceries.printList();
+	cout << '\n';
+	cout << '\n';
+	item = groceries.popback( );
+	cout << item.getItem( );
+	cout << '\n';
+	cout << '\n';
+
+	groceries.printList();
+	cout << '\n';
+	cout << '\n';
+}
+
+

@@ -1,0 +1,348 @@
+Start FRAME M141 N108 ;  Frame main backpatched to M141 backpatched to N108 
+CALL M141  backpatched to M141 
+STOP 
+X107 FUNC X107 ;  Contructor for class Node 
+MOV P105 I103 ;  howMany(offset=5) = n 
+MOV P106 I102 ;  item(offset=4) = c 
+MOV N108 I104 ;  next(offset=0) = null 
+RTN ; return from function xtor 
+M109 FUNC M109 ;  char getItem([]) 
+RETURN I102 ; return char item from function func 
+RTN ; return from function func 
+M110 FUNC M110 ;  int getHowMany([]) 
+RETURN I103 ; return int howMany from function func 
+RTN ; return from function func 
+M111 FUNC M111 ;  Node getNext([]) 
+EQ N108 I104 T171 ;  T171 = next == null 
+BF T171 skipif172 ;  BranchFalse T171 (bool) skipif172 
+RETURN N108 ; return null null from function func 
+JMP skipelse173 ;  Jump skipelse173 
+skipif172 RETURN I104 ; return Node next from function func 
+skipelse173 RTN ; return from function func 
+M113 FUNC M113 ;  void setItem(['P112']) 
+MOV P112 I102 ;  item(offset=4) = c 
+RTN ; return from function func 
+M115 FUNC M115 ;  void setHowMany(['P114']) 
+MOV P114 I103 ;  howMany(offset=5) = n 
+RTN ; return from function func 
+M117 FUNC M117 ;  void setNext(['P116']) 
+MOV P116 I104 ;  next(offset=0) = n 
+RTN ; return from function func 
+X122 FUNC X122 ;  Contructor for class List 
+RTN ; return from function xtor 
+M124 FUNC M124 ;  void pushback(['P123']) 
+EQ N108 I120 T178 ;  T178 = last == null 
+BF T178 skipif179 ;  BranchFalse T178 (bool) skipif179 
+MOV P123 I120 ;  last(offset=0) = n 
+MOV P123 I119 ;  first(offset=4) = n 
+JMP skipelse182 ;  Jump skipelse182 
+skipif179 FRAME M117 I120 ['P123'] ;  void setNext(['P116']) 
+PUSH P123 4 ;  n, offset = 0 
+CALL M117 
+MOV P123 I120 ;  last(offset=0) = n 
+ADD N125 I121 T185 ;  T185 = count + 1 
+MOV T185 I121 ;  count(offset=8) = T185 
+skipelse182 RTN ; return from function func 
+M127 FUNC M127 ;  void pushfront(['P126']) 
+EQ N108 I119 T187 ;  T187 = first == null 
+BF T187 skipif188 ;  BranchFalse T187 (bool) skipif188 
+MOV P126 I119 ;  first(offset=4) = n 
+MOV P126 I120 ;  last(offset=0) = n 
+ADD N125 I121 T191 ;  T191 = count + 1 
+MOV T191 I121 ;  count(offset=8) = T191 
+JMP skipelse193 ;  Jump skipelse193 
+skipif188 MOV I119 L128 ;  second(offset=-4) = first 
+FRAME M117 P126 ['L128'] ;  void setNext(['P116']) 
+PUSH L128 4 ;  second, offset = -4 
+CALL M117 
+MOV P126 I119 ;  first(offset=4) = n 
+ADD N125 I121 T197 ;  T197 = count + 1 
+MOV T197 I121 ;  count(offset=8) = T197 
+skipelse193 RTN ; return from function func 
+M129 FUNC M129 ;  Node popback([]) 
+EQ N108 I120 T199 ;  T199 = last == null 
+BF T199 skipif200 ;  BranchFalse T199 (bool) skipif200 
+RETURN N108 ; return null null from function func 
+JMP skipelse201 ;  Jump skipelse201 
+skipif200 MOV I119 L130 ;  temp(offset=0) = first 
+begin203 FRAME M111 L130 ;  Node getNext([]) 
+CALL M111 
+PEEK L204 ;  get return value 
+FRAME M111 L204 ;  Node getNext([]) 
+CALL M111 
+PEEK L205 ;  get return value 
+NE N108 L205 T206 ;  T206 = L205 != null 
+BF T206 endwhile207 ;  BranchFalse T206 (bool) endwhile207 
+FRAME M111 L130 ;  Node getNext([]) 
+CALL M111 
+PEEK L208 ;  get return value 
+MOV L208 L130 ;  temp(offset=0) = L208 
+JMP begin203 ;  Jump begin203 
+endwhile207 MOV L130 I120 ;  last(offset=0) = temp 
+FRAME M111 L130 ;  Node getNext([]) 
+CALL M111 
+PEEK L211 ;  get return value 
+MOV L211 L130 ;  temp(offset=0) = L211 
+FRAME M117 I120 ['N108'] ;  void setNext(['P116']) 
+PUSH N108 4 ;  null, offset = 0 
+CALL M117 
+SUB N125 I121 T214 ;  T214 = count - 1 
+MOV T214 I121 ;  count(offset=8) = T214 
+EQ N125 I121 T216 ;  T216 = count == 1 
+BF T216 skipif217 ;  BranchFalse T216 (bool) skipif217 
+MOV I120 I119 ;  first(offset=4) = last 
+skipif217 RETURN L130 ; return Node temp from function func 
+skipelse201 RTN ; return from function func 
+M131 FUNC M131 ;  Node popfront([]) 
+EQ N108 I119 T219 ;  T219 = first == null 
+BF T219 skipif220 ;  BranchFalse T219 (bool) skipif220 
+RETURN N108 ; return null null from function func 
+JMP skipelse221 ;  Jump skipelse221 
+skipif220 MOV I119 L132 ;  temp(offset=0) = first 
+FRAME M111 I119 ;  Node getNext([]) 
+CALL M111 
+PEEK L223 ;  get return value 
+MOV L223 I119 ;  first(offset=4) = L223 
+SUB N125 I121 T225 ;  T225 = count - 1 
+MOV T225 I121 ;  count(offset=8) = T225 
+EQ N125 I121 T227 ;  T227 = count == 1 
+BF T227 skipif228 ;  BranchFalse T227 (bool) skipif228 
+MOV I119 I120 ;  last(offset=0) = first 
+skipif228 RETURN L132 ; return Node temp from function func 
+skipelse221 RTN ; return from function func 
+M133 FUNC M133 ;  Node getFirst([]) 
+EQ N108 I119 T230 ;  T230 = first == null 
+BF T230 skipif231 ;  BranchFalse T230 (bool) skipif231 
+RETURN N108 ; return null null from function func 
+JMP skipelse232 ;  Jump skipelse232 
+skipif231 RETURN I119 ; return Node first from function func 
+skipelse232 RTN ; return from function func 
+M134 FUNC M134 ;  Node getLast([]) 
+EQ N108 I119 T233 ;  T233 = first == null 
+BF T233 skipif234 ;  BranchFalse T233 (bool) skipif234 
+RETURN N108 ; return null null from function func 
+JMP skipelse235 ;  Jump skipelse235 
+skipif234 RETURN I120 ; return Node last from function func 
+skipelse235 RTN ; return from function func 
+M135 FUNC M135 ;  void printList([]) 
+FRAME M133 this ;  getFirst([]) 
+CALL M133 
+PEEK L236 ;  get return value 
+MOV L236 L136 ;  current(offset=0) = L236 
+begin238 FRAME M111 L136 ;  Node getNext([]) 
+CALL M111 
+PEEK L239 ;  get return value 
+NE N108 L239 T240 ;  T240 = L239 != null 
+BF T240 endwhile241 ;  BranchFalse T240 (bool) endwhile241 
+FRAME M110 L136 ;  int getHowMany([]) 
+CALL M110 
+PEEK L242 ;  get return value 
+WRITE L242 int ;  cout << L242(int) 
+WRITE H137 char ;  cout << ' '(char) 
+FRAME M109 L136 ;  char getItem([]) 
+CALL M109 
+PEEK L243 ;  get return value 
+WRITE L243 char ;  cout << L243(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+FRAME M111 L136 ;  Node getNext([]) 
+CALL M111 
+PEEK L244 ;  get return value 
+MOV L244 L136 ;  current(offset=0) = L244 
+JMP begin238 ;  Jump begin238 
+endwhile241 FRAME M110 L136 ;  int getHowMany([]) 
+CALL M110 
+PEEK L246 ;  get return value 
+WRITE L246 int ;  cout << L246(int) 
+WRITE H137 char ;  cout << ' '(char) 
+FRAME M109 L136 ;  char getItem([]) 
+CALL M109 
+PEEK L247 ;  get return value 
+WRITE L247 char ;  cout << L247(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+RTN ; return from function func 
+M139 FUNC M139 ;  void printFirstNode([]) 
+FRAME M133 this ;  getFirst([]) 
+CALL M133 
+PEEK L248 ;  get return value 
+MOV L248 L140 ;  first(offset=0) = L248 
+FRAME M110 L140 ;  int getHowMany([]) 
+CALL M110 
+PEEK L250 ;  get return value 
+WRITE L250 int ;  cout << L250(int) 
+WRITE H137 char ;  cout << ' '(char) 
+FRAME M109 L140 ;  char getItem([]) 
+CALL M109 
+PEEK L251 ;  get return value 
+WRITE L251 char ;  cout << L251(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+RTN ; return from function func 
+M141 FUNC M141 ; void kxi2016 main() 
+NEWI 9 L252 ;  new instance of Node -> L252 
+FRAME S167 L252 ;  static initializer for class Node backpatched to S167 
+CALL S167  backpatched to S167 
+PEEK L252 
+FRAME X107 L252 ['N125', 'H144'] ;  Node Node(['P105', 'P106']) 
+PUSH N125 4 ;  1, offset = 0 
+PUSH H144 1 ;  'a', offset = 0 
+CALL X107 
+PEEK L252 ;  get return value 
+MOV L252 L143 ;  a(offset=-4) = L252 
+NEWI 9 L254 ;  new instance of Node -> L254 
+FRAME S167 L254 ;  static initializer for class Node backpatched to S167 
+CALL S167  backpatched to S167 
+PEEK L254 
+FRAME X107 L254 ['N146', 'H147'] ;  Node Node(['P105', 'P106']) 
+PUSH N146 4 ;  2, offset = 0 
+PUSH H147 1 ;  'b', offset = 0 
+CALL X107 
+PEEK L254 ;  get return value 
+MOV L254 L145 ;  b(offset=-16) = L254 
+NEWI 9 L256 ;  new instance of Node -> L256 
+FRAME S167 L256 ;  static initializer for class Node backpatched to S167 
+CALL S167  backpatched to S167 
+PEEK L256 
+FRAME X107 L256 ['N149', 'H150'] ;  Node Node(['P105', 'P106']) 
+PUSH N149 4 ;  3, offset = 0 
+PUSH H150 1 ;  'c', offset = 0 
+CALL X107 
+PEEK L256 ;  get return value 
+MOV L256 L148 ;  c(offset=-28) = L256 
+NEWI 9 L258 ;  new instance of Node -> L258 
+FRAME S167 L258 ;  static initializer for class Node backpatched to S167 
+CALL S167  backpatched to S167 
+PEEK L258 
+FRAME X107 L258 ['N152', 'H153'] ;  Node Node(['P105', 'P106']) 
+PUSH N152 4 ;  4, offset = 0 
+PUSH H153 1 ;  'd', offset = 0 
+CALL X107 
+PEEK L258 ;  get return value 
+MOV L258 L151 ;  d(offset=-40) = L258 
+NEWI 9 L260 ;  new instance of Node -> L260 
+FRAME S167 L260 ;  static initializer for class Node backpatched to S167 
+CALL S167  backpatched to S167 
+PEEK L260 
+FRAME X107 L260 ['N155', 'H156'] ;  Node Node(['P105', 'P106']) 
+PUSH N155 4 ;  5, offset = 0 
+PUSH H156 1 ;  'e', offset = 0 
+CALL X107 
+PEEK L260 ;  get return value 
+MOV L260 L154 ;  e(offset=-52) = L260 
+NEWI 9 L262 ;  new instance of Node -> L262 
+FRAME S167 L262 ;  static initializer for class Node backpatched to S167 
+CALL S167  backpatched to S167 
+PEEK L262 
+FRAME X107 L262 ['N158', 'H159'] ;  Node Node(['P105', 'P106']) 
+PUSH N158 4 ;  6, offset = 0 
+PUSH H159 1 ;  'f', offset = 0 
+CALL X107 
+PEEK L262 ;  get return value 
+MOV L262 L157 ;  f(offset=-64) = L262 
+NEWI 9 L264 ;  new instance of Node -> L264 
+FRAME S167 L264 ;  static initializer for class Node backpatched to S167 
+CALL S167  backpatched to S167 
+PEEK L264 
+FRAME X107 L264 ['N161', 'H162'] ;  Node Node(['P105', 'P106']) 
+PUSH N161 4 ;  7, offset = 0 
+PUSH H162 1 ;  'g', offset = 0 
+CALL X107 
+PEEK L264 ;  get return value 
+MOV L264 L160 ;  g(offset=-76) = L264 
+NEWI 9 L266 ;  new instance of Node -> L266 
+FRAME S167 L266 ;  static initializer for class Node backpatched to S167 
+CALL S167  backpatched to S167 
+PEEK L266 
+FRAME X107 L266 ['N164', 'H165'] ;  Node Node(['P105', 'P106']) 
+PUSH N164 4 ;  8, offset = 0 
+PUSH H165 1 ;  'h', offset = 0 
+CALL X107 
+PEEK L266 ;  get return value 
+MOV L266 L163 ;  h(offset=-88) = L266 
+FRAME M127 L142 ['L143'] ;  void pushfront(['P126']) 
+PUSH L143 4 ;  a, offset = -4 
+CALL M127 
+FRAME M127 L142 ['L145'] ;  void pushfront(['P126']) 
+PUSH L145 4 ;  b, offset = -16 
+CALL M127 
+FRAME M127 L142 ['L148'] ;  void pushfront(['P126']) 
+PUSH L148 4 ;  c, offset = -28 
+CALL M127 
+FRAME M127 L142 ['L151'] ;  void pushfront(['P126']) 
+PUSH L151 4 ;  d, offset = -40 
+CALL M127 
+FRAME M135 L142 ;  void printList([]) 
+CALL M135 
+WRITE H138 char ;  cout << '\n'(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+FRAME M127 L142 ['L154'] ;  void pushfront(['P126']) 
+PUSH L154 4 ;  e, offset = -52 
+CALL M127 
+FRAME M127 L142 ['L157'] ;  void pushfront(['P126']) 
+PUSH L157 4 ;  f, offset = -64 
+CALL M127 
+FRAME M135 L142 ;  void printList([]) 
+CALL M135 
+WRITE H138 char ;  cout << '\n'(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+FRAME M131 L142 ;  Node popfront([]) 
+CALL M131 
+PEEK L276 ;  get return value 
+MOV L276 L166 ;  item(offset=-100) = L276 
+FRAME M109 L166 ;  char getItem([]) 
+CALL M109 
+PEEK L278 ;  get return value 
+WRITE L278 char ;  cout << L278(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+FRAME M135 L142 ;  void printList([]) 
+CALL M135 
+WRITE H138 char ;  cout << '\n'(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+FRAME M124 L142 ['L160'] ;  void pushback(['P123']) 
+PUSH L160 4 ;  g, offset = -76 
+CALL M124 
+FRAME M124 L142 ['L163'] ;  void pushback(['P123']) 
+PUSH L163 4 ;  h, offset = -88 
+CALL M124 
+FRAME M135 L142 ;  void printList([]) 
+CALL M135 
+WRITE H138 char ;  cout << '\n'(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+FRAME M129 L142 ;  Node popback([]) 
+CALL M129 
+PEEK L283 ;  get return value 
+MOV L283 L166 ;  item(offset=-100) = L283 
+FRAME M109 L166 ;  char getItem([]) 
+CALL M109 
+PEEK L285 ;  get return value 
+WRITE L285 char ;  cout << L285(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+FRAME M135 L142 ;  void printList([]) 
+CALL M135 
+WRITE H138 char ;  cout << '\n'(char) 
+WRITE H138 char ;  cout << '\n'(char) 
+RTN ; return from function main 
+S167 FUNC S167 ;  static initializer for classNode 
+RTN ; return from static initializer for Node 
+S177 FUNC S177 ;  static initializer for classList 
+RTN ; return from static initializer for List 
+H144 .BYT a 
+H147 .BYT b 
+N161 .INT 7 
+N164 .INT 8 
+H138 .BYT \n 
+H137 .BYT   
+N108 .INT 0 
+H153 .BYT d 
+N125 .INT 1 
+N158 .INT 6 
+H162 .BYT g 
+H165 .BYT h 
+N152 .INT 4 
+N155 .INT 5 
+N149 .INT 3 
+H159 .BYT f 
+H156 .BYT e 
+N146 .INT 2 
+H150 .BYT c 
+End STOP ; end of code, beginning of heap 
