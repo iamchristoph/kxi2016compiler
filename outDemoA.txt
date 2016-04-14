@@ -63,13 +63,13 @@ FRAME X134 L232 ['P114'] ;  iNode iNode(['P133'])
 PUSH P114 1 ;  key, offset = 0 
 CALL X134 
 PEEK L232 ;  get return value 
-MOV L232 R231 ;  R231(offset=-21) = L232 
+MOV L232 R231 ;  R231(offset=-24) = L232 
 RETURN B113 ; return bool true from function func 
 JMP skipelse234 ;  Jump skipelse234 
 skipif230 REF P115 I131 R235 ;  R235 = node.left offset = 4 
 FRAME M116 this ;  insert(['P114', 'P115']) 
 PUSH P114 1 ;  key, offset = 0 
-PUSH R235 4 ;  R235, offset = -33 
+PUSH R235 4 ;  R235, offset = -36 
 CALL M116 
 PEEK L236 ;  get return value 
 RETURN L236 ; return bool L236 from function func 
@@ -89,13 +89,13 @@ FRAME X134 L245 ['P114'] ;  iNode iNode(['P133'])
 PUSH P114 1 ;  key, offset = 0 
 CALL X134 
 PEEK L245 ;  get return value 
-MOV L245 R244 ;  R244(offset=-57) = L245 
+MOV L245 R244 ;  R244(offset=-60) = L245 
 RETURN B113 ; return bool true from function func 
 JMP skipelse247 ;  Jump skipelse247 
 skipif243 REF P115 I132 R248 ;  R248 = node.right offset = 0 
 FRAME M116 this ;  insert(['P114', 'P115']) 
 PUSH P114 1 ;  key, offset = 0 
-PUSH R248 4 ;  R248, offset = -69 
+PUSH R248 4 ;  R248, offset = -72 
 CALL M116 
 PEEK L249 ;  get return value 
 RETURN L249 ; return bool L249 from function func 
@@ -161,71 +161,71 @@ MOV T277 I137 ;  msg(offset=0) = T277
 AEF I137 N108 A280 ;  msg + 0 * sizeof char (pointer) 
 MOV H142 A280 ;  A280(offset=-12) = 'A' 
 AEF I137 N109 A282 ;  msg + 1 * sizeof char (pointer) 
-MOV H143 A282 ;  A282(offset=-14) = 'd' 
+MOV H143 A282 ;  A282(offset=-20) = 'd' 
 AEF I137 N110 A284 ;  msg + 2 * sizeof char (pointer) 
-MOV H143 A284 ;  A284(offset=-16) = 'd' 
+MOV H143 A284 ;  A284(offset=-28) = 'd' 
 AEF I137 N144 A286 ;  msg + 3 * sizeof char (pointer) 
-MOV H145 A286 ;  A286(offset=-18) = 'e' 
+MOV H145 A286 ;  A286(offset=-36) = 'e' 
 AEF I137 N146 A288 ;  msg + 4 * sizeof char (pointer) 
-MOV H143 A288 ;  A288(offset=-20) = 'd' 
+MOV H143 A288 ;  A288(offset=-44) = 'd' 
 AEF I137 N147 A290 ;  msg + 5 * sizeof char (pointer) 
-MOV H124 A290 ;  A290(offset=-22) = ' ' 
+MOV H124 A290 ;  A290(offset=-52) = ' ' 
 AEF I137 N148 A292 ;  msg + 6 * sizeof char (pointer) 
-MOV H149 A292 ;  A292(offset=-24) = 'E' 
+MOV H149 A292 ;  A292(offset=-60) = 'E' 
 AEF I137 N150 A294 ;  msg + 7 * sizeof char (pointer) 
-MOV H151 A294 ;  A294(offset=-26) = 'l' 
+MOV H151 A294 ;  A294(offset=-68) = 'l' 
 AEF I137 N152 A296 ;  msg + 8 * sizeof char (pointer) 
-MOV H145 A296 ;  A296(offset=-28) = 'e' 
+MOV H145 A296 ;  A296(offset=-76) = 'e' 
 AEF I137 N153 A298 ;  msg + 9 * sizeof char (pointer) 
-MOV H154 A298 ;  A298(offset=-30) = 'm' 
+MOV H154 A298 ;  A298(offset=-84) = 'm' 
 AEF I137 N155 A300 ;  msg + 10 * sizeof char (pointer) 
-MOV H145 A300 ;  A300(offset=-32) = 'e' 
+MOV H145 A300 ;  A300(offset=-92) = 'e' 
 AEF I137 N156 A302 ;  msg + 11 * sizeof char (pointer) 
-MOV H157 A302 ;  A302(offset=-34) = 'n' 
+MOV H157 A302 ;  A302(offset=-100) = 'n' 
 AEF I137 N158 A304 ;  msg + 12 * sizeof char (pointer) 
-MOV H159 A304 ;  A304(offset=-36) = 't' 
+MOV H159 A304 ;  A304(offset=-108) = 't' 
 AEF I137 N160 A306 ;  msg + 13 * sizeof char (pointer) 
-MOV H161 A306 ;  A306(offset=-38) = ':' 
+MOV H161 A306 ;  A306(offset=-116) = ':' 
 MOV N162 I138 ;  i(offset=8) = 14 
 AEF I137 I138 A309 ;  msg + i * sizeof char (pointer) 
-MOV H163 A309 ;  A309(offset=-44) = 'D' 
+MOV H163 A309 ;  A309(offset=-128) = 'D' 
 ADD N109 I138 T311 ;  T311 = i + 1 
 AEF I137 T311 A312 ;  msg + T311 * sizeof char (pointer) 
-MOV H164 A312 ;  A312(offset=-50) = 'u' 
+MOV H164 A312 ;  A312(offset=-140) = 'u' 
 ADD N110 I138 T314 ;  T314 = i + 2 
 AEF I137 T314 A315 ;  msg + T314 * sizeof char (pointer) 
-MOV H165 A315 ;  A315(offset=-56) = 'p' 
+MOV H165 A315 ;  A315(offset=-152) = 'p' 
 ADD N144 I138 T317 ;  T317 = i + 3 
 AEF I137 T317 A318 ;  msg + T317 * sizeof char (pointer) 
-MOV H151 A318 ;  A318(offset=-62) = 'l' 
+MOV H151 A318 ;  A318(offset=-164) = 'l' 
 ADD N146 I138 T320 ;  T320 = i + 4 
 AEF I137 T320 A321 ;  msg + T320 * sizeof char (pointer) 
-MOV H166 A321 ;  A321(offset=-68) = 'i' 
+MOV H166 A321 ;  A321(offset=-176) = 'i' 
 ADD N147 I138 T323 ;  T323 = i + 5 
 AEF I137 T323 A324 ;  msg + T323 * sizeof char (pointer) 
-MOV H167 A324 ;  A324(offset=-74) = 'c' 
+MOV H167 A324 ;  A324(offset=-188) = 'c' 
 ADD N148 I138 T326 ;  T326 = i + 6 
 AEF I137 T326 A327 ;  msg + T326 * sizeof char (pointer) 
-MOV H168 A327 ;  A327(offset=-80) = 'a' 
+MOV H168 A327 ;  A327(offset=-200) = 'a' 
 ADD N150 I138 T329 ;  T329 = i + 7 
 AEF I137 T329 A330 ;  msg + T329 * sizeof char (pointer) 
-MOV H159 A330 ;  A330(offset=-86) = 't' 
+MOV H159 A330 ;  A330(offset=-212) = 't' 
 ADD N152 I138 T332 ;  T332 = i + 8 
 AEF I137 T332 A333 ;  msg + T332 * sizeof char (pointer) 
-MOV H145 A333 ;  A333(offset=-92) = 'e' 
+MOV H145 A333 ;  A333(offset=-224) = 'e' 
 ADD N153 I138 T335 ;  T335 = i + 9 
 AEF I137 T335 A336 ;  msg + T335 * sizeof char (pointer) 
-MOV H124 A336 ;  A336(offset=-98) = ' ' 
+MOV H124 A336 ;  A336(offset=-236) = ' ' 
 AEF I137 N169 A338 ;  msg + 24 * sizeof char (pointer) 
-MOV H149 A338 ;  A338(offset=-100) = 'E' 
+MOV H149 A338 ;  A338(offset=-244) = 'E' 
 AEF I137 N170 A340 ;  msg + 25 * sizeof char (pointer) 
-MOV H157 A340 ;  A340(offset=-102) = 'n' 
+MOV H157 A340 ;  A340(offset=-252) = 'n' 
 AEF I137 N171 A342 ;  msg + 26 * sizeof char (pointer) 
-MOV H159 A342 ;  A342(offset=-104) = 't' 
+MOV H159 A342 ;  A342(offset=-260) = 't' 
 AEF I137 N172 A344 ;  msg + 27 * sizeof char (pointer) 
-MOV H145 A344 ;  A344(offset=-106) = 'e' 
+MOV H145 A344 ;  A344(offset=-268) = 'e' 
 AEF I137 N173 A346 ;  msg + 28 * sizeof char (pointer) 
-MOV H174 A346 ;  A346(offset=-108) = 'r' 
+MOV H174 A346 ;  A346(offset=-276) = 'r' 
 RTN ; return from function xtor 
 M177 FUNC M177 ;  void print(['P175', 'P176']) 
 begin348 LE P176 P175 T349 ;  T349 = i <= end 
@@ -291,18 +291,18 @@ AEF L191 N109 A380 ;  cc + 1 * sizeof char (pointer)
 AEF L191 N110 A381 ;  cc + 2 * sizeof char (pointer) 
 MOV A381 A380 ;  A380(offset=-48) = A381 
 AEF L191 N197 A383 ;  cc + 31 * sizeof char (pointer) 
-MOV I185 A383 ;  A383(offset=-51) = c 
+MOV I185 A383 ;  A383(offset=-60) = c 
 AEF L191 N141 A385 ;  cc + 100 * sizeof char (pointer) 
-MOV I185 A385 ;  A385(offset=-53) = c 
+MOV I185 A385 ;  A385(offset=-68) = c 
 AEF L191 N155 A387 ;  cc + 10 * sizeof char (pointer) 
-MOV I185 A387 ;  A387(offset=-55) = c 
+MOV I185 A387 ;  A387(offset=-76) = c 
 MOV L193 L193 ;  ii(offset=-16) = ii 
 AEF L193 N146 A390 ;  ii + 4 * sizeof int (pointer) 
 ADD I184 N147 T391 ;  T391 = 5 + i 
-MOV T391 A390 ;  A390(offset=-61) = T391 
+MOV T391 A390 ;  A390(offset=-88) = T391 
 AEF L193 N198 A393 ;  ii + 5000 * sizeof int (pointer) 
 ADD I184 N147 T394 ;  T394 = 5 + i 
-MOV T394 A393 ;  A393(offset=-73) = T394 
+MOV T394 A393 ;  A393(offset=-100) = T394 
 AEF L193 N108 A396 ;  ii + 0 * sizeof int (pointer) 
 MOV A396 I184 ;  i(offset=4) = A396 
 AEF L195 N108 A398 ;  ss + 0 * sizeof Syntax (pointer) 
@@ -315,11 +315,11 @@ PUSH N150 4 ;  7, offset = 0
 PUSH H167 1 ;  'c', offset = 0 
 CALL X189 
 PEEK L399 ;  get return value 
-MOV L399 A398 ;  A398(offset=-93) = L399 
+MOV L399 A398 ;  A398(offset=-120) = L399 
 AEF L195 I184 A401 ;  ss + i * sizeof Syntax (pointer) 
 ADD N109 I184 T402 ;  T402 = i + 1 
 AEF L195 T402 A403 ;  ss + T402 * sizeof Syntax (pointer) 
-MOV A403 A401 ;  A401(offset=-105) = A403 
+MOV A403 A401 ;  A401(offset=-132) = A403 
 DIV N144 N150 T405 ;  T405 = 7 / 3 
 ADD T405 I184 T406 ;  T406 = i + T405 
 AEF L195 T406 A407 ;  ss + T406 * sizeof Syntax (pointer) 
@@ -332,10 +332,10 @@ PUSH I184 4 ;  i, offset = 4
 PUSH I185 1 ;  c, offset = 8 
 CALL X189 
 PEEK L408 ;  get return value 
-MOV L408 A407 ;  A407(offset=-129) = L408 
+MOV L408 A407 ;  A407(offset=-156) = L408 
 AEF L193 N108 A410 ;  ii + 0 * sizeof int (pointer) 
 FRAME M200 this ;  which(['P199']) 
-PUSH A410 4 ;  A410, offset = -141 
+PUSH A410 4 ;  A410, offset = -168 
 CALL M200 
 PEEK L411 ;  get return value 
 RTN ; return from function func 
@@ -352,7 +352,7 @@ PEEK L414
 FRAME X140 L414 ;  Message Message([]) 
 CALL X140 
 PEEK L414 ;  get return value 
-MOV L414 L204 ;  msg(offset=-5) = L414 
+MOV L414 L204 ;  msg(offset=-8) = L414 
 NEWI 8 L416 ;  new instance of iTree -> L416 
 FRAME S206 L416 ;  static initializer for class iTree backpatched to S206 
 CALL S206  backpatched to S206 
@@ -360,7 +360,7 @@ PEEK L416
 FRAME X104 L416 ;  iTree iTree([]) 
 CALL X104 
 PEEK L416 ;  get return value 
-MOV L416 L203 ;  tree(offset=-1) = L416 
+MOV L416 L203 ;  tree(offset=-4) = L416 
 FRAME M182 L204 ;  void msg3([]) 
 CALL M182 
 READ L202 char ;  cin >> key(char) 

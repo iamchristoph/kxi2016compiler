@@ -263,12 +263,12 @@ def pushtemp(typ, rtyp, kind='temp', par=None, val=None) :
     sym.data.size = 4
   if statcon and owner[1].scope == 'g':
     owner = symtab.get(statcon)
-    sym.data.offset = -owner.data.size
-    owner.data.size += sym.data.size
+    sym.data.offset = -(owner.data.size)
+    owner.data.size += 4
     #statcons[statcon].append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner.value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
   else :
     sym.data.offset = -(owner[1].data.size + owner[1].data.psize)
-    owner[1].data.size += sym.data.size
+    owner[1].data.size += 4
     #Icode.append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner[1].value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
   if DEBUG :
     print '#TPUSH', SAS.top().data.symid
@@ -290,7 +290,7 @@ def vpush(var) :
     else:
       sym.data.size = 4
     sym.data.offset = -(owner[1].data.size + owner[1].data.psize)
-    owner[1].data.size +=sym.data.size
+    owner[1].data.size +=4
     #Icode.append([LBL.pop(), 'PUSH', sym.symid, sym.data.size, None, ';  ' + owner[1].value + '.' + sym.value + ', offset = ' + str(sym.data.offset)]) 
   if DEBUG :
     print '#VEXIST', SAS.top().data.symid
@@ -553,8 +553,8 @@ def funcp(symbol) :
       psym.data.size = 1
     else:
       psym.data.size = 4
-    psym.data.offset = -symbol.data.psize
-    symbol.data.psize += psym.data.size
+    psym.data.offset = -(symbol.data.psize)
+    symbol.data.psize += 4
 
 def cdec(t) :
   scope = symtab.scope

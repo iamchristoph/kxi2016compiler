@@ -130,7 +130,7 @@ def push(code) :
   comment = '; Push ' + code[2] + ' size: ' + str(code[3]) + ' type: ' + p.data.returntype + ' offset: ' + str(p.data.offset)
   return [['MOV', 'R0', 'SP', comment]] + get + ld +\
           [[st, 'R3', 'R0'],\
-          ['ADI', 'SP', -p.data.size]]
+          ['ADI', 'SP', -4]]
 
 def load(sym) : 
   sid = sym.symid

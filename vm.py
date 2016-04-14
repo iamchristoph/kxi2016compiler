@@ -278,12 +278,16 @@ class VirtualMachine :
       elif opcode > 20 and opcode < 25:
         _address, = unpack('i', this.Regs[source])
         if opcode is 21 : # 'STR' stor int register indirect address
-          this.mem[_address:_address+4] = pack('i', unpack('i', this.Regs[destination][0:4])[0])
+          num, = unpack('i', this.Regs[destination][0:4])
+          #print "STR ", num, _address
+          this.mem[_address:_address+4] = pack('i', num)
         elif opcode is 22 : # 'LDR' load int register indirect addressing
-          this.Regs[destination] = pack('i', unpack('i', this.mem[_address:_address+4])[0])
+          num, = unpack('i', this.mem[_address:_address+4])
+          #print 'LDR', num, _address
+          this.Regs[destination] = pack('i', num)
         elif opcode is 23 : # 'STB' store byte register indirect addressing
           byte, = unpack('c', this.Regs[destination][0:1])
-          #print 'Byte = ', byte, _address
+          #print 'Byte = ', byte, _address, pack('c', byte)
           this.mem[_address:_address+1] = pack('c', byte)
         elif opcode is 24 : # 'LDB' load byte register indirect addressing
           c, = unpack('c', this.mem[_address:_address+1])

@@ -1,5 +1,5 @@
 Start MOV R1 SP ;  Frame main backpatched to M201 backpatched to N105 Frame M201 
-ADI R1 -69 
+ADI R1 -72 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -215,10 +215,10 @@ JMP Z435
 Z434 SUB R3 R3 
 ADI R3 1 
 Z435 MOV R2 FP 
-ADI R2 -13 
+ADI R2 -16 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 BRZ R3 skipif220 
 MOV R0 SL ; start NEWI 
@@ -226,7 +226,7 @@ ADI R1 13
 CMP R0 SP 
 BLT R1 End ; if room on the heap for object 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 MOV R3 SL 
 STR R3 R2 
 ADI SL 13 ; end NEWI 
@@ -239,7 +239,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -251,10 +251,10 @@ JMP S268 ; call
 MOV R0 SP 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 STR R1 R2 
 MOV R1 SP ;  iNode iNode(['P133']) Frame X134 
-ADI R1 -18 
+ADI R1 -21 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -262,7 +262,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -271,7 +271,7 @@ MOV R2 FP
 ADI R2 -12 
 LDB R3 R2 
 STB R3 R0 
-ADI SP -1 
+ADI SP -4 
 MOV FP R7 ; call 
 MOV R0 PC 
 ADI R0 36 
@@ -280,10 +280,10 @@ JMP X134 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 STR R1 R2 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 LDR R3 R2 
 MOV R1 FP 
 ADI R1 -8 
@@ -319,7 +319,7 @@ MOV R2 FP
 ADI R2 -12 
 LDB R3 R2 
 STB R3 R0 
-ADI SP -1 
+ADI SP -4 
 MOV R0 SP ; Push I102 size: 4 type: iNode offset: 0 
 MOV R1 FP 
 ADI R1 -8 
@@ -336,14 +336,14 @@ JMP M116 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -25 
+ADI R2 -28 
 STR R1 R2 
 MOV R0 FP ; rtn 
 ADI R0 -4 
 LDR R7 R0 ; get the previous frame pointer 
 ADI R0 -4 ; get the return value 
 MOV R2 FP 
-ADI R2 -25 
+ADI R2 -28 
 LDR R3 R2 
 LDR R2 FP 
 STR R3 FP 
@@ -362,14 +362,14 @@ MOV FP R1
 JMR R3 ; rtn 
 M116 ADI SP -76 
 MOV R2 FP  ; start REF 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 ADI R3 12 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 STR R3 R2  ; end REF 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 LDR R1 R2 
 LDB R3 R1 
 MOV R4 R3 
@@ -383,23 +383,23 @@ JMP Z437
 Z436 SUB R3 R3 
 ADI R3 1 
 Z437 MOV R2 FP 
-ADI R2 -21 
+ADI R2 -24 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -21 
+ADI R2 -24 
 LDR R3 R2 
 BRZ R3 skipif227 
 MOV R2 FP  ; start REF 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 ADI R3 4 
 MOV R2 FP 
-ADI R2 -25 
+ADI R2 -28 
 STR R3 R2  ; end REF 
 LDR R3 N105 
 MOV R4 R3 
 MOV R2 FP 
-ADI R2 -25 
+ADI R2 -28 
 LDR R1 R2 
 LDR R3 R1 
 CMP R3 R4 
@@ -409,25 +409,25 @@ JMP Z439
 Z438 SUB R3 R3 
 ADI R3 1 
 Z439 MOV R2 FP 
-ADI R2 -29 
+ADI R2 -32 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -29 
+ADI R2 -32 
 LDR R3 R2 
 BRZ R3 skipif230 
 MOV R2 FP  ; start REF 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 ADI R3 4 
 MOV R2 FP 
-ADI R2 -33 
+ADI R2 -36 
 STR R3 R2  ; end REF 
 MOV R0 SL ; start NEWI 
 ADI R1 13 
 CMP R0 SP 
 BLT R1 End ; if room on the heap for object 
 MOV R2 FP 
-ADI R2 -37 
+ADI R2 -40 
 MOV R3 SL 
 STR R3 R2 
 ADI SL 13 ; end NEWI 
@@ -440,7 +440,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -37 
+ADI R2 -40 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -452,10 +452,10 @@ JMP S268 ; call
 MOV R0 SP 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -37 
+ADI R2 -40 
 STR R1 R2 
 MOV R1 SP ;  iNode iNode(['P133']) Frame X134 
-ADI R1 -18 
+ADI R1 -21 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -463,7 +463,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -37 
+ADI R2 -40 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -472,7 +472,7 @@ MOV R2 FP
 ADI R2 -12 
 LDB R3 R2 
 STB R3 R0 
-ADI SP -1 
+ADI SP -4 
 MOV FP R7 ; call 
 MOV R0 PC 
 ADI R0 36 
@@ -481,13 +481,13 @@ JMP X134 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -37 
+ADI R2 -40 
 STR R1 R2 
 MOV R2 FP 
-ADI R2 -37 
+ADI R2 -40 
 LDR R3 R2 
 MOV R2 FP 
-ADI R2 -33 
+ADI R2 -36 
 LDR R2 R2 
 STR R3 R2 
 MOV R0 FP ; rtn 
@@ -502,11 +502,11 @@ MOV FP R7
 JMR R2 ; rtn 
 JMP skipelse234 ;  Jump skipelse234 
 skipif230 MOV R2 FP  ; start REF 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 ADI R3 4 
 MOV R2 FP 
-ADI R2 -45 
+ADI R2 -48 
 STR R3 R2  ; end REF 
 MOV R1 SP ;  insert(['P114', 'P115']) Frame M116 
 ADI R1 -93 
@@ -526,10 +526,10 @@ MOV R2 FP
 ADI R2 -12 
 LDB R3 R2 
 STB R3 R0 
-ADI SP -1 
-MOV R0 SP ; Push R235 size: 4 type: iNode offset: -33 
+ADI SP -4 
+MOV R0 SP ; Push R235 size: 4 type: iNode offset: -36 
 MOV R2 FP 
-ADI R2 -45 
+ADI R2 -48 
 LDR R1 R2 
 LDR R3 R1 
 STR R3 R0 
@@ -542,14 +542,14 @@ JMP M116 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -49 
+ADI R2 -52 
 STR R1 R2 
 MOV R0 FP ; rtn 
 ADI R0 -4 
 LDR R7 R0 ; get the previous frame pointer 
 ADI R0 -4 ; get the return value 
 MOV R2 FP 
-ADI R2 -49 
+ADI R2 -52 
 LDR R3 R2 
 LDR R2 FP 
 STR R3 FP 
@@ -558,14 +558,14 @@ MOV FP R7
 JMR R2 ; rtn 
 skipelse234 JMP skipelse237 ;  Jump skipelse237 
 skipif227 MOV R2 FP  ; start REF 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 ADI R3 12 
 MOV R2 FP 
-ADI R2 -53 
+ADI R2 -56 
 STR R3 R2  ; end REF 
 MOV R2 FP 
-ADI R2 -53 
+ADI R2 -56 
 LDR R1 R2 
 LDB R3 R1 
 MOV R4 R3 
@@ -579,23 +579,23 @@ JMP Z441
 Z440 SUB R3 R3 
 ADI R3 1 
 Z441 MOV R2 FP 
-ADI R2 -57 
+ADI R2 -60 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -57 
+ADI R2 -60 
 LDR R3 R2 
 BRZ R3 skipif240 
 MOV R2 FP  ; start REF 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 ADI R3 0 
 MOV R2 FP 
-ADI R2 -61 
+ADI R2 -64 
 STR R3 R2  ; end REF 
 LDR R3 N105 
 MOV R4 R3 
 MOV R2 FP 
-ADI R2 -61 
+ADI R2 -64 
 LDR R1 R2 
 LDR R3 R1 
 CMP R3 R4 
@@ -605,25 +605,25 @@ JMP Z443
 Z442 SUB R3 R3 
 ADI R3 1 
 Z443 MOV R2 FP 
-ADI R2 -65 
+ADI R2 -68 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -65 
+ADI R2 -68 
 LDR R3 R2 
 BRZ R3 skipif243 
 MOV R2 FP  ; start REF 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 ADI R3 0 
 MOV R2 FP 
-ADI R2 -69 
+ADI R2 -72 
 STR R3 R2  ; end REF 
 MOV R0 SL ; start NEWI 
 ADI R1 13 
 CMP R0 SP 
 BLT R1 End ; if room on the heap for object 
 MOV R2 FP 
-ADI R2 -73 
+ADI R2 -76 
 MOV R3 SL 
 STR R3 R2 
 ADI SL 13 ; end NEWI 
@@ -636,7 +636,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -73 
+ADI R2 -76 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -648,10 +648,10 @@ JMP S268 ; call
 MOV R0 SP 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -73 
+ADI R2 -76 
 STR R1 R2 
 MOV R1 SP ;  iNode iNode(['P133']) Frame X134 
-ADI R1 -18 
+ADI R1 -21 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -659,7 +659,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -73 
+ADI R2 -76 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -668,7 +668,7 @@ MOV R2 FP
 ADI R2 -12 
 LDB R3 R2 
 STB R3 R0 
-ADI SP -1 
+ADI SP -4 
 MOV FP R7 ; call 
 MOV R0 PC 
 ADI R0 36 
@@ -677,13 +677,13 @@ JMP X134 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -73 
+ADI R2 -76 
 STR R1 R2 
 MOV R2 FP 
-ADI R2 -73 
+ADI R2 -76 
 LDR R3 R2 
 MOV R2 FP 
-ADI R2 -69 
+ADI R2 -72 
 LDR R2 R2 
 STR R3 R2 
 MOV R0 FP ; rtn 
@@ -698,11 +698,11 @@ MOV FP R7
 JMR R2 ; rtn 
 JMP skipelse247 ;  Jump skipelse247 
 skipif243 MOV R2 FP  ; start REF 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 ADI R3 0 
 MOV R2 FP 
-ADI R2 -81 
+ADI R2 -84 
 STR R3 R2  ; end REF 
 MOV R1 SP ;  insert(['P114', 'P115']) Frame M116 
 ADI R1 -93 
@@ -722,10 +722,10 @@ MOV R2 FP
 ADI R2 -12 
 LDB R3 R2 
 STB R3 R0 
-ADI SP -1 
-MOV R0 SP ; Push R248 size: 4 type: iNode offset: -69 
+ADI SP -4 
+MOV R0 SP ; Push R248 size: 4 type: iNode offset: -72 
 MOV R2 FP 
-ADI R2 -81 
+ADI R2 -84 
 LDR R1 R2 
 LDR R3 R1 
 STR R3 R0 
@@ -738,14 +738,14 @@ JMP M116 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -85 
+ADI R2 -88 
 STR R1 R2 
 MOV R0 FP ; rtn 
 ADI R0 -4 
 LDR R7 R0 ; get the previous frame pointer 
 ADI R0 -4 ; get the return value 
 MOV R2 FP 
-ADI R2 -85 
+ADI R2 -88 
 LDR R3 R2 
 LDR R2 FP 
 STR R3 FP 
@@ -762,7 +762,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -1062,7 +1062,7 @@ STR R2 FP
 MOV SP FP 
 MOV FP R1 
 JMR R3 ; rtn 
-X134 ADI SP -5 
+X134 ADI SP -8 
 MOV R2 FP 
 ADI R2 -12 
 LDB R3 R2 
@@ -1117,7 +1117,7 @@ STR R2 FP
 MOV SP FP 
 MOV FP R1 
 JMR R3 ; rtn 
-X140 ADI SP -110 
+X140 ADI SP -284 
 MOV R0 SL ; start NEW 
 LDR R3 N141 
 SUB R4 R4 
@@ -1168,11 +1168,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -26 
+ADI R2 -32 
 STR R3 R2 
 LDB R3 H143 
 MOV R2 FP 
-ADI R2 -26 
+ADI R2 -32 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N110  ; start AEF 
@@ -1186,11 +1186,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -28 
+ADI R2 -40 
 STR R3 R2 
 LDB R3 H143 
 MOV R2 FP 
-ADI R2 -28 
+ADI R2 -40 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N144  ; start AEF 
@@ -1204,11 +1204,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -30 
+ADI R2 -48 
 STR R3 R2 
 LDB R3 H145 
 MOV R2 FP 
-ADI R2 -30 
+ADI R2 -48 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N146  ; start AEF 
@@ -1222,11 +1222,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -32 
+ADI R2 -56 
 STR R3 R2 
 LDB R3 H143 
 MOV R2 FP 
-ADI R2 -32 
+ADI R2 -56 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N147  ; start AEF 
@@ -1240,11 +1240,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -34 
+ADI R2 -64 
 STR R3 R2 
 LDB R3 H124 
 MOV R2 FP 
-ADI R2 -34 
+ADI R2 -64 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N148  ; start AEF 
@@ -1258,11 +1258,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -36 
+ADI R2 -72 
 STR R3 R2 
 LDB R3 H149 
 MOV R2 FP 
-ADI R2 -36 
+ADI R2 -72 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N150  ; start AEF 
@@ -1276,11 +1276,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -38 
+ADI R2 -80 
 STR R3 R2 
 LDB R3 H151 
 MOV R2 FP 
-ADI R2 -38 
+ADI R2 -80 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N152  ; start AEF 
@@ -1294,11 +1294,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -40 
+ADI R2 -88 
 STR R3 R2 
 LDB R3 H145 
 MOV R2 FP 
-ADI R2 -40 
+ADI R2 -88 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N153  ; start AEF 
@@ -1312,11 +1312,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -42 
+ADI R2 -96 
 STR R3 R2 
 LDB R3 H154 
 MOV R2 FP 
-ADI R2 -42 
+ADI R2 -96 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N155  ; start AEF 
@@ -1330,11 +1330,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -44 
+ADI R2 -104 
 STR R3 R2 
 LDB R3 H145 
 MOV R2 FP 
-ADI R2 -44 
+ADI R2 -104 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N156  ; start AEF 
@@ -1348,11 +1348,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -46 
+ADI R2 -112 
 STR R3 R2 
 LDB R3 H157 
 MOV R2 FP 
-ADI R2 -46 
+ADI R2 -112 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N158  ; start AEF 
@@ -1366,11 +1366,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -48 
+ADI R2 -120 
 STR R3 R2 
 LDB R3 H159 
 MOV R2 FP 
-ADI R2 -48 
+ADI R2 -120 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N160  ; start AEF 
@@ -1384,11 +1384,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -50 
+ADI R2 -128 
 STR R3 R2 
 LDB R3 H161 
 MOV R2 FP 
-ADI R2 -50 
+ADI R2 -128 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N162 
@@ -1412,11 +1412,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -56 
+ADI R2 -140 
 STR R3 R2 
 LDB R3 H163 
 MOV R2 FP 
-ADI R2 -56 
+ADI R2 -140 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N109 
@@ -1428,10 +1428,10 @@ ADI R2 8
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -58 
+ADI R2 -148 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -58 
+ADI R2 -148 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 1 
@@ -1443,11 +1443,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -62 
+ADI R2 -152 
 STR R3 R2 
 LDB R3 H164 
 MOV R2 FP 
-ADI R2 -62 
+ADI R2 -152 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N110 
@@ -1459,10 +1459,10 @@ ADI R2 8
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -64 
+ADI R2 -160 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -64 
+ADI R2 -160 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 1 
@@ -1474,11 +1474,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -68 
+ADI R2 -164 
 STR R3 R2 
 LDB R3 H165 
 MOV R2 FP 
-ADI R2 -68 
+ADI R2 -164 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N144 
@@ -1490,10 +1490,10 @@ ADI R2 8
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -70 
+ADI R2 -172 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -70 
+ADI R2 -172 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 1 
@@ -1505,11 +1505,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -74 
+ADI R2 -176 
 STR R3 R2 
 LDB R3 H151 
 MOV R2 FP 
-ADI R2 -74 
+ADI R2 -176 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N146 
@@ -1521,10 +1521,10 @@ ADI R2 8
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -76 
+ADI R2 -184 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -76 
+ADI R2 -184 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 1 
@@ -1536,11 +1536,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -80 
+ADI R2 -188 
 STR R3 R2 
 LDB R3 H166 
 MOV R2 FP 
-ADI R2 -80 
+ADI R2 -188 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N147 
@@ -1552,10 +1552,10 @@ ADI R2 8
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -82 
+ADI R2 -196 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -82 
+ADI R2 -196 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 1 
@@ -1567,11 +1567,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -86 
+ADI R2 -200 
 STR R3 R2 
 LDB R3 H167 
 MOV R2 FP 
-ADI R2 -86 
+ADI R2 -200 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N148 
@@ -1583,10 +1583,10 @@ ADI R2 8
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -88 
+ADI R2 -208 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -88 
+ADI R2 -208 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 1 
@@ -1598,11 +1598,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -92 
+ADI R2 -212 
 STR R3 R2 
 LDB R3 H168 
 MOV R2 FP 
-ADI R2 -92 
+ADI R2 -212 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N150 
@@ -1614,10 +1614,10 @@ ADI R2 8
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -94 
+ADI R2 -220 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -94 
+ADI R2 -220 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 1 
@@ -1629,11 +1629,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -98 
+ADI R2 -224 
 STR R3 R2 
 LDB R3 H159 
 MOV R2 FP 
-ADI R2 -98 
+ADI R2 -224 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N152 
@@ -1645,10 +1645,10 @@ ADI R2 8
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -100 
+ADI R2 -232 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -100 
+ADI R2 -232 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 1 
@@ -1660,11 +1660,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -104 
+ADI R2 -236 
 STR R3 R2 
 LDB R3 H145 
 MOV R2 FP 
-ADI R2 -104 
+ADI R2 -236 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N153 
@@ -1676,10 +1676,10 @@ ADI R2 8
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -106 
+ADI R2 -244 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -106 
+ADI R2 -244 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 1 
@@ -1691,11 +1691,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -110 
+ADI R2 -248 
 STR R3 R2 
 LDB R3 H124 
 MOV R2 FP 
-ADI R2 -110 
+ADI R2 -248 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N169  ; start AEF 
@@ -1709,11 +1709,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -112 
+ADI R2 -256 
 STR R3 R2 
 LDB R3 H149 
 MOV R2 FP 
-ADI R2 -112 
+ADI R2 -256 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N170  ; start AEF 
@@ -1727,11 +1727,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -114 
+ADI R2 -264 
 STR R3 R2 
 LDB R3 H157 
 MOV R2 FP 
-ADI R2 -114 
+ADI R2 -264 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N171  ; start AEF 
@@ -1745,11 +1745,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -116 
+ADI R2 -272 
 STR R3 R2 
 LDB R3 H159 
 MOV R2 FP 
-ADI R2 -116 
+ADI R2 -272 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N172  ; start AEF 
@@ -1763,11 +1763,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -118 
+ADI R2 -280 
 STR R3 R2 
 LDB R3 H145 
 MOV R2 FP 
-ADI R2 -118 
+ADI R2 -280 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N173  ; start AEF 
@@ -1781,11 +1781,11 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -120 
+ADI R2 -288 
 STR R3 R2 
 LDB R3 H174 
 MOV R2 FP 
-ADI R2 -120 
+ADI R2 -288 
 LDR R2 R2 
 STB R3 R2 
 MOV R0 FP ; rtn 
@@ -1798,7 +1798,7 @@ STR R2 FP
 MOV SP FP 
 MOV FP R1 
 JMR R3 ; rtn 
-M177 ADI SP -13 
+M177 ADI SP -16 
 begin348 MOV R2 FP 
 ADI R2 -16 
 LDR R3 R2 
@@ -1847,10 +1847,10 @@ ADI R2 -12
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -25 
+ADI R2 -28 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -25 
+ADI R2 -28 
 LDR R3 R2 
 MOV R2 FP 
 ADI R2 -12 
@@ -1868,7 +1868,7 @@ MOV FP R1
 JMR R3 ; rtn 
 M179 ADI SP -4 
 MOV R1 SP ;  print(['P175', 'P176']) Frame M177 
-ADI R1 -33 
+ADI R1 -36 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -1909,7 +1909,7 @@ STR R2 FP
 MOV SP FP 
 MOV FP R1 
 JMR R3 ; rtn 
-M181 ADI SP -21 
+M181 ADI SP -24 
 LDR R3 N162 
 MOV R1 FP 
 ADI R1 -8 
@@ -1925,10 +1925,10 @@ ADI R2 8
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 LDR R3 R2 
 MOV R1 FP 
 ADI R1 -8 
@@ -1936,7 +1936,7 @@ LDR R2 R1
 ADI R2 4 
 STR R3 R2 
 MOV R1 SP ;  print(['P175', 'P176']) Frame M177 
-ADI R1 -33 
+ADI R1 -36 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -1980,15 +1980,15 @@ ADI R2 0
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -29 
+ADI R2 -32 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -29 
+ADI R2 -32 
 LDR R1 R2 
 LDB R3 R1 
 TRP 3 ;  cout << A359(char) 
 MOV R1 SP ;  print(['P175', 'P176']) Frame M177 
-ADI R1 -33 
+ADI R1 -36 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -2031,7 +2031,7 @@ MOV FP R1
 JMR R3 ; rtn 
 M182 ADI SP -16 
 MOV R1 SP ;  print(['P175', 'P176']) Frame M177 
-ADI R1 -33 
+ADI R1 -36 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -2063,7 +2063,7 @@ LDR R2 R1
 ADI R2 8 
 STR R3 R2 
 MOV R1 SP ;  print(['P175', 'P176']) Frame M177 
-ADI R1 -33 
+ADI R1 -36 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -2097,7 +2097,7 @@ ADI R0 36
 STR R0 R7 
 JMP M177 ; call 
 MOV R1 SP ;  print(['P175', 'P176']) Frame M177 
-ADI R1 -33 
+ADI R1 -36 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -2132,7 +2132,7 @@ STR R2 FP
 MOV SP FP 
 MOV FP R1 
 JMR R3 ; rtn 
-X189 ADI SP -5 
+X189 ADI SP -8 
 MOV R2 FP 
 ADI R2 -12 
 LDR R3 R2 
@@ -2159,7 +2159,7 @@ STR R2 FP
 MOV SP FP 
 MOV FP R1 
 JMR R3 ; rtn 
-M190 ADI SP -149 
+M190 ADI SP -176 
 MOV R0 SL ; start NEW 
 LDR R3 N192 
 SUB R4 R4 
@@ -2237,10 +2237,10 @@ ADI R2 -12
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -61 
+ADI R2 -64 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -61 
+ADI R2 -64 
 LDR R1 R2 
 LDB R3 R1 
 MOV R2 FP 
@@ -2256,7 +2256,7 @@ ADI R2 -12
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -63 
+ADI R2 -72 
 STR R3 R2 
 MOV R1 FP 
 ADI R1 -8 
@@ -2264,7 +2264,7 @@ LDR R2 R1
 ADI R2 8 
 LDB R3 R2 
 MOV R2 FP 
-ADI R2 -63 
+ADI R2 -72 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N141  ; start AEF 
@@ -2276,7 +2276,7 @@ ADI R2 -12
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -65 
+ADI R2 -80 
 STR R3 R2 
 MOV R1 FP 
 ADI R1 -8 
@@ -2284,7 +2284,7 @@ LDR R2 R1
 ADI R2 8 
 LDB R3 R2 
 MOV R2 FP 
-ADI R2 -65 
+ADI R2 -80 
 LDR R2 R2 
 STB R3 R2 
 LDR R3 N155  ; start AEF 
@@ -2296,7 +2296,7 @@ ADI R2 -12
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -67 
+ADI R2 -88 
 STR R3 R2 
 MOV R1 FP 
 ADI R1 -8 
@@ -2304,7 +2304,7 @@ LDR R2 R1
 ADI R2 8 
 LDB R3 R2 
 MOV R2 FP 
-ADI R2 -67 
+ADI R2 -88 
 LDR R2 R2 
 STB R3 R2 
 MOV R2 FP 
@@ -2322,7 +2322,7 @@ ADI R2 -28
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -73 
+ADI R2 -100 
 STR R3 R2 
 MOV R1 FP 
 ADI R1 -8 
@@ -2333,13 +2333,13 @@ MOV R4 R3
 LDR R3 N147 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -77 
+ADI R2 -104 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -77 
+ADI R2 -104 
 LDR R3 R2 
 MOV R2 FP 
-ADI R2 -73 
+ADI R2 -100 
 LDR R2 R2 
 STR R3 R2 
 LDR R3 N198  ; start AEF 
@@ -2351,7 +2351,7 @@ ADI R2 -28
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -85 
+ADI R2 -112 
 STR R3 R2 
 MOV R1 FP 
 ADI R1 -8 
@@ -2362,13 +2362,13 @@ MOV R4 R3
 LDR R3 N147 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -89 
+ADI R2 -116 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -89 
+ADI R2 -116 
 LDR R3 R2 
 MOV R2 FP 
-ADI R2 -85 
+ADI R2 -112 
 LDR R2 R2 
 STR R3 R2 
 LDR R3 N108  ; start AEF 
@@ -2380,10 +2380,10 @@ ADI R2 -28
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -97 
+ADI R2 -124 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -97 
+ADI R2 -124 
 LDR R1 R2 
 LDR R3 R1 
 MOV R1 FP 
@@ -2400,19 +2400,19 @@ ADI R2 -44
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -105 
+ADI R2 -132 
 STR R3 R2 
 MOV R0 SL ; start NEWI 
 ADI R1 9 
 CMP R0 SP 
 BLT R1 End ; if room on the heap for object 
 MOV R2 FP 
-ADI R2 -109 
+ADI R2 -136 
 MOV R3 SL 
 STR R3 R2 
 ADI SL 9 ; end NEWI 
 MOV R1 SP ;  static initializer for class Syntax backpatched to S365 Frame S365 
-ADI R1 -21 
+ADI R1 -24 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -2420,7 +2420,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -109 
+ADI R2 -136 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2432,10 +2432,10 @@ JMP S365 ; call
 MOV R0 SP 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -109 
+ADI R2 -136 
 STR R1 R2 
 MOV R1 SP ;  Syntax Syntax(['P187', 'P188']) Frame X189 
-ADI R1 -22 
+ADI R1 -25 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -2443,7 +2443,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -109 
+ADI R2 -136 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2454,7 +2454,7 @@ ADI SP -4
 MOV R0 SP ; Push H167 size: 1 type: char offset: 0 
 LDB R3 H167 
 STB R3 R0 
-ADI SP -1 
+ADI SP -4 
 MOV FP R7 ; call 
 MOV R0 PC 
 ADI R0 36 
@@ -2463,13 +2463,13 @@ JMP X189 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -109 
+ADI R2 -136 
 STR R1 R2 
 MOV R2 FP 
-ADI R2 -109 
+ADI R2 -136 
 LDR R3 R2 
 MOV R2 FP 
-ADI R2 -105 
+ADI R2 -132 
 LDR R2 R2 
 STR R3 R2 
 MOV R1 FP 
@@ -2485,7 +2485,7 @@ ADI R2 -44
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -117 
+ADI R2 -144 
 STR R3 R2 
 LDR R3 N109 
 MOV R4 R3 
@@ -2496,10 +2496,10 @@ ADI R2 4
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -121 
+ADI R2 -148 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -121 
+ADI R2 -148 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 4 
@@ -2509,14 +2509,14 @@ ADI R2 -44
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -125 
+ADI R2 -152 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -125 
+ADI R2 -152 
 LDR R1 R2 
 LDR R3 R1 
 MOV R2 FP 
-ADI R2 -117 
+ADI R2 -144 
 LDR R2 R2 
 STR R3 R2 
 LDR R3 N144 
@@ -2524,10 +2524,10 @@ MOV R4 R3
 LDR R3 N150 
 DIV R3 R4 
 MOV R2 FP 
-ADI R2 -133 
+ADI R2 -160 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -133 
+ADI R2 -160 
 LDR R3 R2 
 MOV R4 R3 
 MOV R1 FP 
@@ -2537,10 +2537,10 @@ ADI R2 4
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -137 
+ADI R2 -164 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -137 
+ADI R2 -164 
 LDR R3 R2  ; start AEF 
 SUB R4 R4 
 ADI R4 4 
@@ -2550,19 +2550,19 @@ ADI R2 -44
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -141 
+ADI R2 -168 
 STR R3 R2 
 MOV R0 SL ; start NEWI 
 ADI R1 9 
 CMP R0 SP 
 BLT R1 End ; if room on the heap for object 
 MOV R2 FP 
-ADI R2 -145 
+ADI R2 -172 
 MOV R3 SL 
 STR R3 R2 
 ADI SL 9 ; end NEWI 
 MOV R1 SP ;  static initializer for class Syntax backpatched to S365 Frame S365 
-ADI R1 -21 
+ADI R1 -24 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -2570,7 +2570,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -145 
+ADI R2 -172 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2582,10 +2582,10 @@ JMP S365 ; call
 MOV R0 SP 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -145 
+ADI R2 -172 
 STR R1 R2 
 MOV R1 SP ;  Syntax Syntax(['P187', 'P188']) Frame X189 
-ADI R1 -22 
+ADI R1 -25 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -2593,7 +2593,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -145 
+ADI R2 -172 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2612,7 +2612,7 @@ LDR R2 R1
 ADI R2 8 
 LDB R3 R2 
 STB R3 R0 
-ADI SP -1 
+ADI SP -4 
 MOV FP R7 ; call 
 MOV R0 PC 
 ADI R0 36 
@@ -2621,13 +2621,13 @@ JMP X189 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -145 
+ADI R2 -172 
 STR R1 R2 
 MOV R2 FP 
-ADI R2 -145 
+ADI R2 -172 
 LDR R3 R2 
 MOV R2 FP 
-ADI R2 -141 
+ADI R2 -168 
 LDR R2 R2 
 STR R3 R2 
 LDR R3 N108  ; start AEF 
@@ -2639,7 +2639,7 @@ ADI R2 -28
 LDR R3 R2 
 ADD R3 R4 
 MOV R2 FP 
-ADI R2 -153 
+ADI R2 -180 
 STR R3 R2 
 MOV R1 SP ;  which(['P199']) Frame M200 
 ADI R1 -24 
@@ -2654,9 +2654,9 @@ ADI R2 -8
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
-MOV R0 SP ; Push A410 size: 4 type: int offset: -141 
+MOV R0 SP ; Push A410 size: 4 type: int offset: -168 
 MOV R2 FP 
-ADI R2 -153 
+ADI R2 -180 
 LDR R1 R2 
 LDR R3 R1 
 STR R3 R0 
@@ -2669,7 +2669,7 @@ JMP M200 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -157 
+ADI R2 -184 
 STR R1 R2 
 MOV R0 FP ; rtn 
 ADI R0 -4 
@@ -2721,13 +2721,13 @@ STR R2 FP
 MOV SP FP 
 MOV FP R1 
 JMR R3 ; rtn 
-M201 ADI SP -57 
+M201 ADI SP -60 
 MOV R0 SL ; start NEWI 
 ADI R1 12 
 CMP R0 SP 
 BLT R1 End ; if room on the heap for object 
 MOV R2 FP 
-ADI R2 -21 
+ADI R2 -24 
 MOV R3 SL 
 STR R3 R2 
 ADI SL 12 ; end NEWI 
@@ -2740,7 +2740,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -21 
+ADI R2 -24 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2752,10 +2752,10 @@ JMP S276 ; call
 MOV R0 SP 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -21 
+ADI R2 -24 
 STR R1 R2 
 MOV R1 SP ;  Message Message([]) Frame X140 
-ADI R1 -122 
+ADI R1 -296 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -2763,7 +2763,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -21 
+ADI R2 -24 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2775,20 +2775,20 @@ JMP X140 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -21 
+ADI R2 -24 
 STR R1 R2 
 MOV R2 FP 
-ADI R2 -21 
+ADI R2 -24 
 LDR R3 R2 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 STR R3 R2 
 MOV R0 SL ; start NEWI 
 ADI R1 8 
 CMP R0 SP 
 BLT R1 End ; if room on the heap for object 
 MOV R2 FP 
-ADI R2 -29 
+ADI R2 -32 
 MOV R3 SL 
 STR R3 R2 
 ADI SL 8 ; end NEWI 
@@ -2801,7 +2801,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -29 
+ADI R2 -32 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2813,7 +2813,7 @@ JMP S206 ; call
 MOV R0 SP 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -29 
+ADI R2 -32 
 STR R1 R2 
 MOV R1 SP ;  iTree iTree([]) Frame X104 
 ADI R1 -16 
@@ -2824,7 +2824,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -29 
+ADI R2 -32 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2836,13 +2836,13 @@ JMP X104 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -29 
+ADI R2 -32 
 STR R1 R2 
 MOV R2 FP 
-ADI R2 -29 
+ADI R2 -32 
 LDR R3 R2 
 MOV R2 FP 
-ADI R2 -13 
+ADI R2 -16 
 STR R3 R2 
 MOV R1 SP ;  void msg3([]) Frame M182 
 ADI R1 -28 
@@ -2853,7 +2853,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2880,10 +2880,10 @@ JMP Z449
 Z448 SUB R3 R3 
 ADI R3 1 
 Z449 MOV R2 FP 
-ADI R2 -41 
+ADI R2 -44 
 STR R3 R2 
 MOV R2 FP 
-ADI R2 -41 
+ADI R2 -44 
 LDR R3 R2 
 BRZ R3 endwhile421 
 MOV R1 SP ;  bool add(['P111']) Frame M112 
@@ -2895,7 +2895,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2904,7 +2904,7 @@ MOV R2 FP
 ADI R2 -12 
 LDB R3 R2 
 STB R3 R0 
-ADI SP -1 
+ADI SP -4 
 MOV FP R7 ; call 
 MOV R0 PC 
 ADI R0 36 
@@ -2913,10 +2913,10 @@ JMP M112 ; call
 MOV R0 SP ;  get return value 
 LDR R1 R0 
 MOV R2 FP 
-ADI R2 -45 
+ADI R2 -48 
 STR R1 R2 
 MOV R2 FP 
-ADI R2 -45 
+ADI R2 -48 
 LDR R3 R2 
 BRZ R3 skipif423 
 MOV R1 SP ;  void msg1(['P178']) Frame M179 
@@ -2928,7 +2928,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2937,7 +2937,7 @@ MOV R2 FP
 ADI R2 -12 
 LDB R3 R2 
 STB R3 R0 
-ADI SP -1 
+ADI SP -4 
 MOV FP R7 ; call 
 MOV R0 PC 
 ADI R0 36 
@@ -2952,7 +2952,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2963,7 +2963,7 @@ STR R0 R7
 JMP M118 ; call 
 JMP skipelse426 ;  Jump skipelse426 
 skipif423 MOV R1 SP ;  void msg2(['P180']) Frame M181 
-ADI R1 -34 
+ADI R1 -37 
 CMP R1 SL 
 BLT R1 End ; if room on the stack for function 
 MOV R7 SP ; store the current SP in R7 for later assignment as new FP 
@@ -2971,7 +2971,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -2980,7 +2980,7 @@ MOV R2 FP
 ADI R2 -12 
 LDB R3 R2 
 STB R3 R0 
-ADI SP -1 
+ADI SP -4 
 MOV FP R7 ; call 
 MOV R0 PC 
 ADI R0 36 
@@ -2995,7 +2995,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -13 
+ADI R2 -16 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -3013,7 +3013,7 @@ ADI SP -4
 STR FP SP ; store the previous frame pointer at FP - 4 
 ADI SP -4 
 MOV R2 FP 
-ADI R2 -17 
+ADI R2 -20 
 LDR R3 R2 
 STR R3 SP ; store the this pointer at FP - 8 
 ADI SP -4 ;  end Frame 
@@ -3061,7 +3061,7 @@ STR R2 FP
 MOV SP FP 
 MOV FP R1 
 JMR R3 ; rtn 
-S365 ADI SP -9 
+S365 ADI SP -12 
 LDR R3 N150 
 MOV R1 FP 
 ADI R1 -8 
