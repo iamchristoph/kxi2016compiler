@@ -164,8 +164,8 @@ def opop() :
     if DEBUG :
       print '#==', l.data.symid, r.data.symid
     if l.data.data.returntype not in syntaxer.classnames :
-      print l.data, r.data
-      return False, 'Operator \'==\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype + 'FAIL'
+      #print l.data, r.data
+      return False, 'Operator \'==\' cannot compare type ' + l.data.data.returntype + ' and ' + r.data.data.returntype
     elif r.data.data.returntype != l.data.data.returntype and r.data.data.returntype != 'null' :
       return False, 'Operator \'==\' cannot compare type ' + r.data.data.returntype + ' and ' + l.data.data.returntype 
     else:
