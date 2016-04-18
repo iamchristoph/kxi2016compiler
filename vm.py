@@ -199,7 +199,7 @@ class VirtualMachine :
           c = chr(this.Regs[3][0])
           sys.stdout.write(c)
         elif destination is 4 : # read char
-          this.Regs[3] = pack('cxxx', raw_input()[0])
+          this.Regs[3] = pack('cxxx', sys.stdin.read(1))
         elif destination is 10 :
           this.Regs[3] = pack('cxxx', chr(unpack('i', this.Regs[3])))
         elif destination is 11 :
